@@ -1,0 +1,12 @@
+from django import forms
+from django.contrib.auth.models import User
+from .models import Inscricao, Usuario
+
+class InscricaoEventoForm(forms.ModelForm):
+    class Meta:
+        model = Inscricao
+        fields = []
+    
+    def clean(self):
+        # Validação extra: verificar se já existe inscrição pode ser feito aqui ou na View
+        pass
