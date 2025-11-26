@@ -1,0 +1,7 @@
+<h3>{{ evento.titulo }}</h3>
+<p>{{ evento.descricao }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
+</form>

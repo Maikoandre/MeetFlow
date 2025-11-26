@@ -19,4 +19,4 @@ def inscrever_evento(request, evento_id):
     else:
         form = InscricaoEventoForm()
 
-    return render(request, 'inscricao.html', {'form': form, 'evento': evento})
+    return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
