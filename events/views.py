@@ -1,10 +1,12 @@
-from django.shortcuts import render,  redirect, get_object_or_404
-from .models import Evento, Usuario, Inscricao
-from .forms import InscricaoEventoForm, EventoForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect, render
+from .forms import EventoForm, InscricaoEventoForm, UsuarioForm
+from .models import Evento, Inscricao, Usuario
+
 
 def index(request):
     return render(request, 'index.html')
@@ -24,11 +26,6 @@ def inscrever_evento(request, evento_id):
         form = InscricaoEventoForm()
 
     return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
-from .forms import UsuarioForm
 
 def cadastro_usuario(request):
     if request.method == 'POST':
@@ -139,3 +136,27 @@ def ver_inscritos(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
     inscricoes = evento.inscricoes.all()
     return render(request, 'gestao/ver_inscritos.html', {'evento': evento, 'inscricoes': inscricoes})
+
+def is_admin(user):
+    return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
+
+@login_required
+@user_passes_test(is_admin)
+def relatorio_admin(request):
+    total_eventos = Evento.objects.count()
+    total_usuarios = Usuario.objects.count()
+    total_inscricoes = Inscricao.objects.count()
+    status_counts = Inscricao.objects.values('status').annotate(total=Count('status'))
+    
+    top_eventos = Evento.objects.annotate(
+        num_inscritos=Count('inscricoes')
+    ).order_by('-num_inscritos')[:5]
+
+    context = {
+        'total_eventos': total_eventos,
+        'total_usuarios': total_usuarios,
+        'total_inscricoes': total_inscricoes,
+        'status_counts': status_counts,
+        'top_eventos': top_eventos,
+    }
+    return render(request, 'gestao/relatorio_admin.html', context)
