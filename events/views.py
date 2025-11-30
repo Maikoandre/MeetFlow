@@ -1,6 +1,6 @@
 from django.shortcuts import render,  redirect, get_object_or_404
 from .models import Evento, Usuario, Inscricao
-from .forms import InscricaoEventoForm
+from .forms import InscricaoEventoForm, EventoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -92,3 +92,50 @@ def detalhes_evento(request, pk):
         'evento': evento,
         'ja_inscrito': ja_inscrito
     })
+
+@login_required
+def gerenciar_eventos(request):
+    eventos = Evento.objects.filter(organizador=request.user)
+    return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
+
+@login_required
+def criar_evento(request):
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            evento = form.save(commit=False)
+            evento.organizador = request.user
+            evento.save()
+            messages.success(request, 'Evento criado com sucesso!')
+            return redirect('gerenciar_eventos')
+    else:
+        form = EventoForm()
+    return render(request, 'gestao/evento_form.html', {'form': form, 'titulo': 'Criar Evento'})
+
+@login_required
+def editar_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
+    if request.method == 'POST':
+        form = EventoForm(request.POST, instance=evento)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Evento atualizado!')
+            return redirect('gerenciar_eventos')
+    else:
+        form = EventoForm(instance=evento)
+    return render(request, 'gestao/evento_form.html', {'form': form, 'titulo': 'Editar Evento'})
+
+@login_required
+def deletar_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
+    if request.method == 'POST':
+        evento.delete()
+        messages.success(request, 'Evento cancelado/excluído com sucesso.')
+        return redirect('gerenciar_eventos')
+    return render(request, 'gestao/evento_confirmar_delete.html', {'evento': evento})
+
+@login_required
+def ver_inscritos(request, pk):
+    evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
+    inscricoes = evento.inscricoes.all()
+    return render(request, 'gestao/ver_inscritos.html', {'evento': evento, 'inscricoes': inscricoes})
