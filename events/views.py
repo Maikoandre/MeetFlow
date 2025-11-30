@@ -2,8 +2,8 @@ from django.shortcuts import render,  redirect, get_object_or_404
 from .models import Evento, Usuario, Inscricao
 from .forms import InscricaoEventoForm, EventoForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
+from django.contrib.auth import update_session_auth_hash, authenticate
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -14,34 +14,27 @@ from .forms import EventoForm, InscricaoEventoForm, UsuarioForm
 from .models import Evento, Inscricao, Usuario, Presenca
 
 def index(request):
-    # Lógica combinada: Se logado tenta mostrar dashboard, senão mostra index normal
     if request.user.is_authenticated:
         try:
             return dashboard(request)
         except Exception:
-            # Fallback de segurança caso o dashboard falhe
             return render(request, 'index.html')
             
     return render(request, 'index.html')
 
 def dashboard(request):
-    # Esta view não precisa de URL própria se for chamada apenas internamente pela index
-    # Mas se quiser acessá-la direto, crie uma rota em urls.py
-    return render(request, 'dashboard_users.html') # Certifique-se que este template existe
+    return render(request, 'dashboard_users.html')
 
 def eventos_lista(request):
-    """Lista todos os eventos publicados e aprovados"""
     eventos = Evento.objects.filter(publicado=True, aprovado=True)
     return render(request, 'events.html', {'eventos': eventos})
 
 @login_required
 def logout_view(request):
-    """Faz logout do usuário"""
     logout(request)
     return redirect('index')
 
 def login_view(request):
-    """Login do usuário"""
     if request.user.is_authenticated:
         return redirect('index')
     
@@ -152,7 +145,7 @@ def detalhes_evento(request, pk):
 
 @login_required
 def gerenciar_eventos(request):
-    eventos = Evento.objects.filter(organizador=request.user)
+    eventos = Evento.objects.filter(organizador=request.user).order_by('-data')
     return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
 
 @login_required
@@ -162,25 +155,36 @@ def criar_evento(request):
         if form.is_valid():
             evento = form.save(commit=False)
             evento.organizador = request.user
+            evento.aprovado = False
             evento.save()
-            messages.success(request, 'Evento criado com sucesso!')
+            messages.success(request, 'Evento criado e enviado para aprovação!')
             return redirect('gerenciar_eventos')
     else:
         form = EventoForm()
-    return render(request, 'gestao/evento_form.html', {'form': form, 'titulo': 'Criar Evento'})
+    
+    return render(request, 'gestao/evento_form.html', {
+        'form': form, 
+        'titulo': 'Novo Evento'
+    })
 
 @login_required
 def editar_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
+    
     if request.method == 'POST':
         form = EventoForm(request.POST, instance=evento)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Evento atualizado!')
+            evento_salvo = form.save(commit=False)
+            evento_salvo.save()
+            messages.success(request, 'Evento atualizado com sucesso!')
             return redirect('gerenciar_eventos')
     else:
         form = EventoForm(instance=evento)
-    return render(request, 'gestao/evento_form.html', {'form': form, 'titulo': 'Editar Evento'})
+        
+    return render(request, 'gestao/evento_form.html', {
+        'form': form, 
+        'titulo': f'Editar: {evento.titulo}'
+    })
 
 @login_required
 def deletar_evento(request, pk):

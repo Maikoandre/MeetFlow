@@ -23,11 +23,15 @@ class UsuarioForm(forms.ModelForm):
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ['titulo', 'descricao', 'data', 'local']
+        fields = ['titulo', 'data', 'local', 'descricao']
         widgets = {
-            'data': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'local': forms.TextInput(attrs={'class': 'form-control'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do evento'}),
+            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'local': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Endereço ou Link'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Detalhes do evento...'}),
+        }
+        labels = {
+            'titulo': 'Título do Evento',
+            'descricao': 'Descrição Completa'
         }
 

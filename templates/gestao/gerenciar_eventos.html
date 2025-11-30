@@ -1,43 +1,71 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Meus Eventos</h2>
-        <a href="{% url 'criar_evento' %}" class="btn btn-primary">+ Novo Evento</a>
+        <h2 class="fw-bold">Meus Eventos</h2>
+        <a href="{% url 'criar_evento' %}" class="btn btn-primary">
+            <i class="mdi mdi-plus-circle"></i> Criar Novo Evento
+        </a>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Título</th>
+                            <th class="ps-4">Evento</th>
                             <th>Data</th>
                             <th>Local</th>
-                            <th>Inscritos</th>
-                            <th>Ações</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for evento in eventos %}
                         <tr>
-                            <td>{{ evento.titulo }}</td>
+                            <td class="ps-4 fw-bold">
+                                <a href="{% url 'detalhes_evento' evento.id %}" class="text-decoration-none text-dark">
+                                    {{ evento.titulo }}
+                                </a>
+                            </td>
                             <td>{{ evento.data|date:"d/m/Y" }}</td>
                             <td>{{ evento.local }}</td>
                             <td>
-                                <a href="{% url 'ver_inscritos' evento.pk %}" class="btn btn-sm btn-info text-white">
-                                    <i class="bi bi-people"></i> Ver ({{ evento.inscricoes.count }})
-                                </a>
+                                {% if evento.aprovado %}
+                                    <span class="badge bg-success">Aprovado</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Em Análise</span>
+                                {% endif %}
                             </td>
-                            <td>
-                                <a href="{% url 'editar_evento' evento.pk %}" class="btn btn-sm btn-warning">Editar</a>
-                                <a href="{% url 'deletar_evento' evento.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'ver_inscritos' evento.id %}" class="btn btn-sm btn-info text-white me-1" title="Ver Inscritos">
+                                    <i class="mdi mdi-account-group"></i>
+                                </a>
+                                <a href="{% url 'editar_evento' evento.id %}" class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                    <i class="mdi mdi-pencil"></i>
+                                </a>
+                                <a href="{% url 'deletar_evento' evento.id %}" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                    <i class="mdi mdi-delete"></i>
+                                </a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center">Nenhum evento cadastrado.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="mdi mdi-calendar-blank fs-1 d-block mb-2"></i>
+                                Você ainda não criou nenhum evento.
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
