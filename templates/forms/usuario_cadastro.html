@@ -7,12 +7,31 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Perfil do Usuário</h4>
+                    <h4 class="mb-0">Criar Nova Conta</h4>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
+
+                        <h5 class="mb-3 text-secondary">Dados de Acesso</h5>
                         
+                        {% for field in user_form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+
+                        <hr class="my-4">
+
+                        <h5 class="mb-3 text-secondary">Dados Pessoais</h5>
+
                         <div class="mb-3">
                             <label for="{{ form.nome.id_for_label }}" class="form-label">Nome Completo</label>
                             {{ form.nome }}
@@ -37,9 +56,9 @@
                             {% endif %}
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">Salvar Dados</button>
-                            <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success">Cadastrar</button>
+                            <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>
