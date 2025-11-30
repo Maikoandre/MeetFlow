@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Inscricao, Usuario
+from .models import Inscricao, Usuario, Evento
 
 class InscricaoEventoForm(forms.ModelForm):
     class Meta:
@@ -8,7 +8,6 @@ class InscricaoEventoForm(forms.ModelForm):
         fields = []
     
     def clean(self):
-        # Validação extra: verificar se já existe inscrição pode ser feito aqui ou na View
         pass
 
 class UsuarioForm(forms.ModelForm):
@@ -20,3 +19,15 @@ class UsuarioForm(forms.ModelForm):
             'idade': forms.NumberInput(attrs={'class': 'form-control'}),
             'tipo': forms.Select(attrs={'class': 'form-select'}),
         }
+
+class EventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields = ['titulo', 'descricao', 'data', 'local']
+        widgets = {
+            'data': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'local': forms.TextInput(attrs={'class': 'form-control'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
