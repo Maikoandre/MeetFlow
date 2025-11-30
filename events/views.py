@@ -160,3 +160,36 @@ def relatorio_admin(request):
         'top_eventos': top_eventos,
     }
     return render(request, 'gestao/relatorio_admin.html', context)
+
+def detalhes_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    ja_inscrito = False
+    if request.user.is_authenticated:
+        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
+
+    return render(request, 'detalhes_evento.html', {
+        'evento': evento,
+        'ja_inscrito': ja_inscrito
+    })
+
+@login_required
+def inscrever_evento(request, evento_id):
+    evento = get_object_or_404(Evento, pk=evento_id)
+    
+    if Inscricao.objects.filter(evento=evento, participante=request.user).exists():
+        messages.warning(request, 'Você já está inscrito neste evento!')
+        return redirect('detalhes_evento', pk=evento.id)
+
+    if request.method == 'POST':
+        form = InscricaoEventoForm(request.POST)
+        if form.is_valid():
+            inscricao = form.save(commit=False)
+            inscricao.participante = request.user
+            inscricao.evento = evento
+            inscricao.save()
+            messages.success(request, 'Inscrição confirmada com sucesso!') # 2. Feedback
+            return redirect('detalhes_evento', pk=evento.id)
+    else:
+        form = InscricaoEventoForm()
+
+    return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
