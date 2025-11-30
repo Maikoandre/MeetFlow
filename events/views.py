@@ -1,5 +1,5 @@
 from django.shortcuts import render,  redirect, get_object_or_404
-from .models import Evento, Usuario
+from .models import Evento, Usuario, Inscricao
 from .forms import InscricaoEventoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -81,3 +81,14 @@ def alterar_senha(request):
         form = PasswordChangeForm(request.user)
         
     return render(request, 'forms/usuario_senha.html', {'form': form})
+
+def detalhes_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    ja_inscrito = False
+    if request.user.is_authenticated:
+        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
+
+    return render(request, 'detalhes_evento.html', {
+        'evento': evento,
+        'ja_inscrito': ja_inscrito
+    })

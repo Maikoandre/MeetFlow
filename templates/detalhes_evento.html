@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">{{ evento.titulo }}</h2>
+        </div>
+        <div class="card-body">
+            <p class="lead text-muted">{{ evento.descricao }}</p>
+            <hr>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <strong>Data:</strong> {{ evento.data|date:"d/m/Y" }}
+                </div>
+                <div class="col-md-6">
+                    <strong>Local:</strong> {{ evento.local }}
+                </div>
+                <div class="col-md-12 mt-2">
+                    <strong>Organizador:</strong> {{ evento.organizador.username }}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                {% if ja_inscrito %}
+                    <button class="btn btn-success disabled">
+                        <i class="bi bi-check-circle"></i> Inscrito Confirmado
+                    </button>
+                {% else %}
+                    <a href="{% url 'inscrever_evento' evento.id %}" class="btn btn-primary">
+                        Inscrever-se Agora
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary ms-2">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
