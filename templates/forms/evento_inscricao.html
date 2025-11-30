@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <h3>{{ evento.titulo }}</h3>
 <p>{{ evento.descricao }}</p>
 
@@ -5,3 +9,4 @@
     {% csrf_token %}
     <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
 </form>
+{% endblock %}
