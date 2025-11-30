@@ -5,26 +5,29 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
-from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import EventoForm, InscricaoEventoForm, UsuarioForm
-from .models import Evento, Inscricao, Usuario
-
+from .models import Evento, Inscricao, Usuario, Presenca
 
 def index(request):
-    # Se o usuário estiver autenticado, mostrar o dashboard personalizado
+    # Lógica combinada: Se logado tenta mostrar dashboard, senão mostra index normal
     if request.user.is_authenticated:
         try:
             return dashboard(request)
         except Exception:
-            # Se ocorrer algum erro ao montar o dashboard (ex: perfil ausente),
-            # cair para a renderização pública da página inicial.
-            pass
-
+            # Fallback de segurança caso o dashboard falhe
+            return render(request, 'index.html')
+            
     return render(request, 'index.html')
+
+def dashboard(request):
+    # Esta view não precisa de URL própria se for chamada apenas internamente pela index
+    # Mas se quiser acessá-la direto, crie uma rota em urls.py
+    return render(request, 'dashboard_users.html') # Certifique-se que este template existe
 
 def eventos_lista(request):
     """Lista todos os eventos publicados e aprovados"""
@@ -72,6 +75,17 @@ def inscrever_evento(request, evento_id):
         form = InscricaoEventoForm()
 
     return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
+
+def detalhes_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    ja_inscrito = False
+    if request.user.is_authenticated:
+        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
+
+    return render(request, 'detalhes_evento.html', {
+        'evento': evento,
+        'ja_inscrito': ja_inscrito
+    })
 
 def cadastro_usuario(request):
     if request.method == 'POST':
@@ -177,8 +191,58 @@ def deletar_evento(request, pk):
         return redirect('gerenciar_eventos')
     return render(request, 'gestao/evento_confirmar_delete.html', {'evento': evento})
 
+def is_admin(user):
+    return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
+
+@login_required
+@user_passes_test(is_admin)
+def relatorio_admin(request):
+    total_eventos = Evento.objects.count()
+    total_usuarios = Usuario.objects.count()
+    total_inscricoes = Inscricao.objects.count()
+    status_counts = Inscricao.objects.values('status').annotate(total=Count('status'))
+
+    top_eventos = Evento.objects.annotate(
+        num_inscritos=Count('inscricoes')
+    ).order_by('-num_inscritos')[:5]
+
+    context = {
+        'total_eventos': total_eventos,
+        'total_usuarios': total_usuarios,
+        'total_inscricoes': total_inscricoes,
+        'status_counts': status_counts,
+        'top_eventos': top_eventos,
+    }
+
 @login_required
 def ver_inscritos(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
-    inscricoes = evento.inscricoes.all()
-    return render(request, 'gestao/ver_inscritos.html', {'evento': evento, 'inscricoes': inscricoes})
+    inscricoes_query = evento.inscricoes.all()
+    lista_inscritos = []
+    for inscricao in inscricoes_query:
+        try:
+            presente = inscricao.presenca.presente
+        except Presenca.DoesNotExist:
+            presente = False
+            
+        lista_inscritos.append({
+            'inscricao': inscricao,
+            'presente': presente
+        })
+    return render(request, 'gestao/ver_inscritos.html', {
+        'evento': evento, 
+        'lista_inscritos': lista_inscritos
+    })
+
+@login_required
+def marcar_presenca(request, inscricao_id):
+    inscricao = get_object_or_404(Inscricao, pk=inscricao_id)
+    if inscricao.evento.organizador != request.user:
+        messages.error(request, "Apenas o organizador pode marcar presença.")
+        return redirect('index')
+    presenca, created = Presenca.objects.get_or_create(inscricao=inscricao)
+    presenca.presente = not presenca.presente
+    presenca.save()
+    status = "confirmada" if presenca.presente else "removida"
+    messages.success(request, f"Presença de {inscricao.participante.username} {status}.")
+    return redirect('ver_inscritos', pk=inscricao.evento.id)
