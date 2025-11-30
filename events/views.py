@@ -20,3 +20,31 @@ def inscrever_evento(request, evento_id):
         form = InscricaoEventoForm()
 
     return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from .forms import UsuarioForm
+
+def cadastro_usuario(request):
+    if request.method == 'POST':
+        user_form = UserCreationForm(request.POST)
+        perfil_form = UsuarioForm(request.POST)
+
+        if user_form.is_valid() and perfil_form.is_valid():
+            user = user_form.save()
+            
+            perfil = perfil_form.save(commit=False)
+            perfil.user = user
+            perfil.save()
+
+            login(request, user)
+            return redirect('index')
+    else:
+        user_form = UserCreationForm()
+        perfil_form = UsuarioForm()
+
+    return render(request, 'forms/usuario_cadastro.html', {
+        'user_form': user_form,
+        'form': perfil_form
+    })
