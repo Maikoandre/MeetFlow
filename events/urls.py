@@ -16,4 +16,6 @@ urlpatterns = [
     # --- Perfil do Usuário ---
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('perfil/senha/', views.alterar_senha, name='alterar_senha'),
+    # --- Admin ---
+    path('relatorios/', views.relatorio_admin, name='relatorio_admin'),
 ]
