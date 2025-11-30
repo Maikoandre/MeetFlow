@@ -1,3 +1,9 @@
+from django.shortcuts import render,  redirect, get_object_or_404
+from .models import Evento, Usuario, Inscricao
+from .forms import InscricaoEventoForm, EventoForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -9,7 +15,47 @@ from .models import Evento, Inscricao, Usuario
 
 
 def index(request):
+    # Se o usuário estiver autenticado, mostrar o dashboard personalizado
+    if request.user.is_authenticated:
+        try:
+            return dashboard(request)
+        except Exception:
+            # Se ocorrer algum erro ao montar o dashboard (ex: perfil ausente),
+            # cair para a renderização pública da página inicial.
+            pass
+
     return render(request, 'index.html')
+
+def eventos_lista(request):
+    """Lista todos os eventos publicados e aprovados"""
+    eventos = Evento.objects.filter(publicado=True, aprovado=True)
+    return render(request, 'events.html', {'eventos': eventos})
+
+@login_required
+def logout_view(request):
+    """Faz logout do usuário"""
+    logout(request)
+    return redirect('index')
+
+def login_view(request):
+    """Login do usuário"""
+    if request.user.is_authenticated:
+        return redirect('index')
+    
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                next_url = request.GET.get('next', 'index')
+                return redirect(next_url)
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'pages/samples/login.html', {'form': form})
 
 def inscrever_evento(request, evento_id):
     evento = get_object_or_404(Evento, pk=evento_id)
@@ -136,60 +182,3 @@ def ver_inscritos(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
     inscricoes = evento.inscricoes.all()
     return render(request, 'gestao/ver_inscritos.html', {'evento': evento, 'inscricoes': inscricoes})
-
-def is_admin(user):
-    return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
-
-@login_required
-@user_passes_test(is_admin)
-def relatorio_admin(request):
-    total_eventos = Evento.objects.count()
-    total_usuarios = Usuario.objects.count()
-    total_inscricoes = Inscricao.objects.count()
-    status_counts = Inscricao.objects.values('status').annotate(total=Count('status'))
-    
-    top_eventos = Evento.objects.annotate(
-        num_inscritos=Count('inscricoes')
-    ).order_by('-num_inscritos')[:5]
-
-    context = {
-        'total_eventos': total_eventos,
-        'total_usuarios': total_usuarios,
-        'total_inscricoes': total_inscricoes,
-        'status_counts': status_counts,
-        'top_eventos': top_eventos,
-    }
-    return render(request, 'gestao/relatorio_admin.html', context)
-
-def detalhes_evento(request, pk):
-    evento = get_object_or_404(Evento, pk=pk)
-    ja_inscrito = False
-    if request.user.is_authenticated:
-        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
-
-    return render(request, 'detalhes_evento.html', {
-        'evento': evento,
-        'ja_inscrito': ja_inscrito
-    })
-
-@login_required
-def inscrever_evento(request, evento_id):
-    evento = get_object_or_404(Evento, pk=evento_id)
-    
-    if Inscricao.objects.filter(evento=evento, participante=request.user).exists():
-        messages.warning(request, 'Você já está inscrito neste evento!')
-        return redirect('detalhes_evento', pk=evento.id)
-
-    if request.method == 'POST':
-        form = InscricaoEventoForm(request.POST)
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.participante = request.user
-            inscricao.evento = evento
-            inscricao.save()
-            messages.success(request, 'Inscrição confirmada com sucesso!') # 2. Feedback
-            return redirect('detalhes_evento', pk=evento.id)
-    else:
-        form = InscricaoEventoForm()
-
-    return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})

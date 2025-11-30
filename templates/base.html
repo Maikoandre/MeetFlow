@@ -1,67 +1,54 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>MeetFlow</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'src/assets/vendors/simple-line-icons/css/simple-line-icons.css' %}">
+    <title>{% block title %}MeetFlow{% endblock %}</title> <link rel="stylesheet" href="{% static 'src/assets/vendors/simple-line-icons/css/simple-line-icons.css' %}">
     <link rel="stylesheet" href="{% static 'src/assets/vendors/flag-icon-css/css/flag-icons.min.css' %}">
     <link rel="stylesheet" href="{% static 'src/assets/vendors/css/vendor.bundle.base.css' %}">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{% static 'src/assets/vendors/font-awesome/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" href="{% static 'src/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}">
     <link rel="stylesheet" href="{% static 'src/assets/vendors/jvectormap/jquery-jvectormap.css' %}">
     <link rel="stylesheet" href="{% static 'src/assets/vendors/daterangepicker/daterangepicker.css' %}">
     <link rel="stylesheet" href="{% static 'src/assets/vendors/chartist/chartist.min.css' %}">
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
+    
     <link rel="stylesheet" href="{% static 'src/assets/css/vertical-light-layout/style.css' %}">
-    <!-- End layout styles -->
     <link rel="shortcut icon" href="{% static 'src/assets/images/favicon.png' %}" />
+    
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
-          
-    {% include "partials/_navbar.html" %}   
-    {% include "partials/_sidebar.html" %}
+    <div class="container-scroller">
+      
+      {% block navbar %}
+        {% include "partials/_navbar.html" %} 
+      {% endblock %}
 
-    <div class="main-panel">
-      <div class="content-wrapper">
-        {% block content %}{% endblock %}
+      <div class="container-fluid page-body-wrapper">
+        
+        {% block sidebar %}
+            {% include "partials/_sidebar.html" %}
+        {% endblock %}
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+            {% block content %}{% endblock %}
+          </div>
+          
+          {% include "partials/_footer.html" %}
+        </div>
       </div>
     </div>
-
-    {% include "partials/_footer.html" %}
-    
-    
     
     <script src="{% static 'src/assets/vendors/js/vendor.bundle.base.js' %}"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
     <script src="{% static 'src/assets/vendors/chart.js/chart.umd.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
     <script src="{% static 'src/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/moment/moment.min.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/daterangepicker/daterangepicker.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/chartist/chartist.min.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
-    <script src="{% static 'src/assets/js/jquery.cookie.js' %}"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
     <script src="{% static 'src/assets/js/off-canvas.js' %}"></script>
     <script src="{% static 'src/assets/js/hoverable-collapse.js' %}"></script>
     <script src="{% static 'src/assets/js/misc.js' %}"></script>
-    <script src="{% static 'src/assets/js/settings.js' %}"></script>
-    <script src="{% static 'src/assets/js/todolist.js' %}"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
     <script src="{% static 'src/assets/js/dashboard.js' %}"></script>
-    <!-- End custom js for this page -->
+    
+    {% block extra_js %}{% endblock %}
   </body>
 </html>
