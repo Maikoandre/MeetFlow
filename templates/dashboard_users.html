@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - {{ perfil.get_tipo_display }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12 grid-margin">
+        <div class="d-sm-flex align-items-baseline report-summary-header">
+            <h5 class="font-weight-semibold">Olá, {{ perfil.nome }}!</h5> 
+            <span class="ml-auto text-muted">Painel de {{ perfil.get_tipo_display }}</span>
+        </div>
+    </div>
+</div>
+
+{% if perfil.tipo == 'admin' %}
+    
+    <div class="row">
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h4 class="card-title text-white">Eventos Pendentes</h4>
+                    <h2>{{ eventos_pendentes }}</h2>
+                    <p>Precisam de aprovação</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Total de Usuários</h4>
+                    <h2>{{ total_usuarios }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Total de Eventos</h4>
+                    <h2>{{ total_eventos }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Aprovar Eventos</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Organizador</th>
+                                    <th>Data</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evento in lista_pendentes %}
+                                <tr>
+                                    <td>{{ evento.titulo }}</td>
+                                    <td>{{ evento.organizador.usuario.nome }}</td> <td>{{ evento.data|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-success btn-sm">Aprovar</a> </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="4">Nenhum evento pendente.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% elif perfil.tipo == 'organizador' %}
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h4 class="card-title text-white">Meus Eventos</h4>
+                    <h2>{{ meus_eventos_count }}</h2>
+                    <p>Criados por você</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Total de Inscritos</h4>
+                    <h2>{{ total_inscritos }}</h2>
+                    <p>Em todos os seus eventos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Gerenciar Meus Eventos</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Data</th>
+                                    <th>Status Aprovação</th>
+                                    <th>Status Publicação</th>
+                                    <th>Inscritos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evento in meus_eventos %}
+                                <tr>
+                                    <td>{{ evento.titulo }}</td>
+                                    <td>{{ evento.data|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if evento.aprovado %}
+                                            <label class="badge badge-success">Aprovado</label>
+                                        {% else %}
+                                            <label class="badge badge-warning">Aguardando</label>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if evento.publicado %}
+                                            <label class="badge badge-info">Publicado</label>
+                                        {% else %}
+                                            <label class="badge badge-secondary">Rascunho</label>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ evento.inscricoes.count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5">Você ainda não criou eventos.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% elif perfil.tipo == 'participante' %}
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Minhas Inscrições</h4>
+                    <h2>{{ total_inscricoes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h4 class="card-title text-white">Eventos Confirmados</h4>
+                    <h2>{{ eventos_confirmados }}</h2>
+                    <p>Prepare-se para ir!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Acompanhar Inscrições</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Data</th>
+                                    <th>Local</th>
+                                    <th>Minha Situação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inscricao in minhas_inscricoes %}
+                                <tr>
+                                    <td>{{ inscricao.evento.titulo }}</td>
+                                    <td>{{ inscricao.evento.data|date:"d/m/Y" }}</td>
+                                    <td>{{ inscricao.evento.local }}</td>
+                                    <td>
+                                        {% if inscricao.status == 'confirmado' %}
+                                            <label class="badge badge-success">Confirmado</label>
+                                        {% elif inscricao.status == 'pendente' %}
+                                            <label class="badge badge-warning">Pendente</label>
+                                        {% else %}
+                                            <label class="badge badge-danger">Cancelado</label>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        Você não está inscrito em eventos. 
+                                        <a href="{% url 'eventos' %}">Ver eventos disponíveis</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}
