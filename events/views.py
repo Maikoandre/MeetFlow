@@ -1,6 +1,10 @@
 from django.shortcuts import render,  redirect, get_object_or_404
-from .models import Evento
+from .models import Evento, Usuario
 from .forms import InscricaoEventoForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 def index(request):
     return render(request, 'index.html')
@@ -48,3 +52,32 @@ def cadastro_usuario(request):
         'user_form': user_form,
         'form': perfil_form
     })
+
+@login_required
+def editar_perfil(request):
+    perfil, created = Usuario.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=perfil)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Perfil atualizado com sucesso!')
+            return redirect('index')
+    else:
+        form = UsuarioForm(instance=perfil)
+    
+    return render(request, 'forms/usuario_editar.html', {'form': form})
+
+@login_required
+def alterar_senha(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user) 
+            messages.success(request, 'Sua senha foi alterada com sucesso!')
+            return redirect('index')
+    else:
+        form = PasswordChangeForm(request.user)
+        
+    return render(request, 'forms/usuario_senha.html', {'form': form})
