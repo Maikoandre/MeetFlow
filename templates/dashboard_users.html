@@ -6,9 +6,9 @@
 
 <div class="row">
     <div class="col-md-12 grid-margin">
-        <div class="d-sm-flex align-items-baseline report-summary-header">
+        <div class=" align-items-baseline report-summary-header">
             <h5 class="font-weight-semibold">Olá, {{ perfil.nome }}!</h5> 
-            <span class="ml-auto text-muted">Painel de {{ perfil.get_tipo_display }}</span>
+            <h1 class="ml-auto text-muted">Painel do {{ perfil.get_tipo_display }}</h1>
         </div>
     </div>
 </div>
@@ -148,7 +148,7 @@
         </div>
     </div>
 
-{% elif perfil.tipo == 'participante' %}
+{% else %}
 
     <div class="row">
         <div class="col-md-6 grid-margin stretch-card">

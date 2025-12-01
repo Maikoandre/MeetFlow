@@ -16,8 +16,10 @@ urlpatterns = [
     path('evento/novo/', views.criar_evento, name='criar_evento'),
     path('evento/<int:pk>/editar/', views.editar_evento, name='editar_evento'),
     path('evento/<int:pk>/deletar/', views.deletar_evento, name='deletar_evento'),
-    #path('evento/<int:pk>/aprovar/', views.aprovar_evento, name='aprovar_evento'),
-    #path('evento/<int:pk>/publicar/', views.publicar_evento, name='publicar_evento'),
+    # Alias usado em templates antigos/externos
+    path('evento/<int:pk>/excluir/', views.deletar_evento, name='excluir_evento'),
+    path('evento/<int:pk>/aprovar/', views.aprovar_evento, name='aprovar_evento'),
+    path('evento/<int:pk>/publicar/', views.publicar_evento, name='publicar_evento'),
     path('evento9/<int:pk>/inscritos/', views.ver_inscritos, name='ver_inscritos'),
     path('inscricao/<int:inscricao_id>/presenca/', views.marcar_presenca, name='marcar_presenca'),
     # --- Perfil do Usuário ---

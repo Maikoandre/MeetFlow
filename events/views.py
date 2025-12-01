@@ -22,8 +22,43 @@ def index(request):
             
     return render(request, 'index.html')
 
+
+@login_required
 def dashboard(request):
-    return render(request, 'dashboard_users.html')
+    usuario = get_object_or_404(Usuario, user=request.user)
+    context = {
+        'perfil': usuario,    # ← você usa isso no HTML
+        'tipo': usuario.tipo, # ← ESSENCIAL
+    }
+
+    if usuario.tipo == 'admin':
+        context.update({
+            'total_eventos': Evento.objects.count(),
+            'total_usuarios': Usuario.objects.count(),
+            'eventos_pendentes': Evento.objects.filter(aprovado=False).count(),
+            'lista_pendentes': Evento.objects.filter(aprovado=False),
+        })
+
+    elif usuario.tipo == 'organizador':
+        meus_eventos = Evento.objects.filter(organizador=request.user)
+        context.update({
+            'meus_eventos': meus_eventos,
+            'meus_eventos_count': meus_eventos.count(),
+            'total_inscritos': Inscricao.objects.filter(evento__organizador=request.user).count(),
+        })
+
+    else:
+        inscricoes = Inscricao.objects.filter(participante=request.user).select_related('evento')
+        context.update({
+            'minhas_inscricoes': inscricoes,
+            'total_inscricoes': inscricoes.count(),
+            'eventos_confirmados': inscricoes.filter(status='confirmado').count(),
+        })
+
+    return render(request, 'dashboard_users.html', context)
+
+
+
 
 def eventos_lista(request):
     eventos = Evento.objects.filter(publicado=True, aprovado=True)
@@ -194,6 +229,34 @@ def deletar_evento(request, pk):
         messages.success(request, 'Evento cancelado/excluído com sucesso.')
         return redirect('gerenciar_eventos')
     return render(request, 'gestao/evento_confirmar_delete.html', {'evento': evento})
+
+
+@login_required
+def aprovar_evento(request, pk):
+    # Somente usuários staff/superuser podem aprovar
+    if not (request.user.is_superuser or request.user.is_staff):
+        messages.error(request, 'Permissão negada.')
+        return redirect('eventos')
+
+    evento = get_object_or_404(Evento, pk=pk)
+    evento.aprovado = True
+    evento.save()
+    messages.success(request, 'Evento aprovado com sucesso.')
+    return redirect('eventos')
+
+
+@login_required
+def publicar_evento(request, pk):
+    # Somente usuários staff/superuser podem publicar
+    if not (request.user.is_superuser or request.user.is_staff):
+        messages.error(request, 'Permissão negada.')
+        return redirect('eventos')
+
+    evento = get_object_or_404(Evento, pk=pk)
+    evento.publicado = True
+    evento.save()
+    messages.success(request, 'Evento publicado com sucesso.')
+    return redirect('eventos')
 
 def is_admin(user):
     return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
