@@ -62,7 +62,20 @@ def dashboard(request):
 
 def eventos_lista(request):
     eventos = Evento.objects.filter(publicado=True, aprovado=True)
-    return render(request, 'events.html', {'eventos': eventos})
+
+    is_participante = False
+    if request.user.is_authenticated:
+        is_participante = request.user.groups.filter(name="participantes").exists()
+
+    return render(
+        request,
+        'events.html',
+        {
+            'eventos': eventos,
+            'is_participante': is_participante
+        }
+    )
+
 
 @login_required
 def logout_view(request):

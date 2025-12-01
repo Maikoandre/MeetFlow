@@ -4,20 +4,31 @@
     <li class="nav-item nav-category">
       <span class="nav-link">Menu</span>
     </li>
-
+    {% if user.is_authenticated %}
     <li class="nav-item">
       <a class="nav-link" href="{% url 'dashboard_user' %}">
         <span class="menu-title">Dashboard</span>
         <i class="icon-speedometer menu-icon"></i>
       </a>
     </li>
+    {% endif %}
 
+    <li class="nav-item">
+      <a class="nav-link" href="/">
+        <span class="menu-title">Inicio</span>
+        <i class="icon-calendar menu-icon"></i>
+      </a>
+    </li>
+
+    
+    {% if not user.is_authenticated or is_participante %}
     <li class="nav-item">
       <a class="nav-link" href="{% url 'eventos' %}">
         <span class="menu-title">Eventos</span>
         <i class="icon-calendar menu-icon"></i>
       </a>
     </li>
+    {% endif %}
 
     {% if user.is_authenticated %}
         

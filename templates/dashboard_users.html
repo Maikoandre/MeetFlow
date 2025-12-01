@@ -64,7 +64,7 @@
                                     <td>{{ evento.titulo }}</td>
                                     <td>{{ evento.organizador.usuario.nome }}</td> <td>{{ evento.data|date:"d/m/Y" }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-success btn-sm">Aprovar</a> </td>
+                                        <a href="{% url 'aprovar_evento' evento.pk %}" class="btn btn-success btn-sm">Aprovar</a> </td>
                                 </tr>
                                 {% empty %}
                                 <tr><td colspan="4">Nenhum evento pendente.</td></tr>
@@ -104,7 +104,7 @@
         <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Gerenciar Meus Eventos</h4>
+                    <a href="{% url 'gerenciar_eventos' %}"> <h4 class="card-title">Gerenciar Meus Eventos</h4></a> 
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
