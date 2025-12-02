@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import EventoForm, InscricaoEventoForm, UsuarioForm
 from .models import Evento, Inscricao, Usuario, Presenca
 
+
 def index(request):
     if request.user.is_authenticated:
         try:
@@ -27,8 +28,8 @@ def index(request):
 def dashboard(request):
     usuario = get_object_or_404(Usuario, user=request.user)
     context = {
-        'perfil': usuario,    # ← você usa isso no HTML
-        'tipo': usuario.tipo, # ← ESSENCIAL
+        'perfil': usuario,
+        'tipo': usuario.tipo,
     }
 
     if usuario.tipo == 'admin':
@@ -36,13 +37,10 @@ def dashboard(request):
             'total_eventos': Evento.objects.count(),
             'total_usuarios': Usuario.objects.count(),
             'eventos_pendentes': Evento.objects.filter(aprovado=False).count(),
-            # Prepara lista de pendentes com nome seguro do organizador para evitar
-            # RelatedObjectDoesNotExist ao acessar `organizador.usuario` no template.
             'lista_pendentes': Evento.objects.filter(aprovado=False).select_related('organizador'),
             'lista_a_publicar': Evento.objects.filter(aprovado=True, publicado=False).select_related('organizador'),
             'lista_publicados': Evento.objects.filter(publicado=True).select_related('organizador'),
         })
-        # Adiciona atributo organizador_nome para cada evento (fallback para username)
         for ev in context['lista_pendentes']:
             try:
                 ev.organizador_nome = ev.organizador.usuario.nome
@@ -68,8 +66,6 @@ def dashboard(request):
     return render(request, 'dashboard_users.html', context)
 
 
-
-
 def eventos_lista(request):
     eventos = Evento.objects.filter(publicado=True, aprovado=True)
 
@@ -92,6 +88,7 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -111,6 +108,7 @@ def login_view(request):
     
     return render(request, 'pages/samples/login.html', {'form': form})
 
+
 def inscrever_evento(request, evento_id):
     evento = get_object_or_404(Evento, pk=evento_id)
     
@@ -127,6 +125,7 @@ def inscrever_evento(request, evento_id):
 
     return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
 
+
 def detalhes_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk)
     ja_inscrito = False
@@ -137,6 +136,7 @@ def detalhes_evento(request, pk):
         'evento': evento,
         'ja_inscrito': ja_inscrito
     })
+
 
 def cadastro_usuario(request):
     if request.method == 'POST':
@@ -161,6 +161,7 @@ def cadastro_usuario(request):
         'form': perfil_form
     })
 
+
 @login_required
 def editar_perfil(request):
     perfil, created = Usuario.objects.get_or_create(user=request.user)
@@ -176,6 +177,7 @@ def editar_perfil(request):
     
     return render(request, 'forms/usuario_editar.html', {'form': form})
 
+
 @login_required
 def alterar_senha(request):
     if request.method == 'POST':
@@ -190,6 +192,7 @@ def alterar_senha(request):
         
     return render(request, 'forms/usuario_senha.html', {'form': form})
 
+
 def detalhes_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk)
     ja_inscrito = False
@@ -201,10 +204,12 @@ def detalhes_evento(request, pk):
         'ja_inscrito': ja_inscrito
     })
 
+
 @login_required
 def gerenciar_eventos(request):
     eventos = Evento.objects.filter(organizador=request.user).order_by('-data')
     return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
+
 
 @login_required
 def criar_evento(request):
@@ -225,6 +230,7 @@ def criar_evento(request):
         'titulo': 'Novo Evento'
     })
 
+
 @login_required
 def editar_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
@@ -244,6 +250,7 @@ def editar_evento(request, pk):
         'titulo': f'Editar: {evento.titulo}'
     })
 
+
 @login_required
 def deletar_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
@@ -256,7 +263,6 @@ def deletar_evento(request, pk):
 
 @login_required
 def aprovar_evento(request, pk):
-    # Permite superuser, staff ou usuários com perfil Usuario.tipo == 'admin'
     if not (
         request.user.is_superuser or
         request.user.is_staff or
@@ -274,7 +280,6 @@ def aprovar_evento(request, pk):
 
 @login_required
 def publicar_evento(request, pk):
-    # Somente usuários staff/superuser podem publicar
     if not (
         request.user.is_superuser or
         request.user.is_staff or
@@ -291,6 +296,7 @@ def publicar_evento(request, pk):
 
 def is_admin(user):
     return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
+
 
 @login_required
 @user_passes_test(is_admin)
@@ -313,6 +319,7 @@ def relatorio_admin(request):
     }
     return render(request, 'gestao/relatorio_admin.html', context)
 
+
 @login_required
 def ver_inscritos(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
@@ -332,6 +339,7 @@ def ver_inscritos(request, pk):
         'evento': evento, 
         'lista_inscritos': lista_inscritos
     })
+
 
 @login_required
 def marcar_presenca(request, inscricao_id):
