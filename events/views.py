@@ -109,23 +109,6 @@ def login_view(request):
     return render(request, 'pages/samples/login.html', {'form': form})
 
 
-def inscrever_evento(request, evento_id):
-    evento = get_object_or_404(Evento, pk=evento_id)
-    
-    if request.method == 'POST':
-        form = InscricaoEventoForm(request.POST)
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.participante = request.user
-            inscricao.evento = evento
-            inscricao.save()
-            return redirect('detalhes_evento', pk=evento.id)
-    else:
-        form = InscricaoEventoForm()
-
-    return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
-
-
 def detalhes_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk)
     ja_inscrito = False
@@ -211,6 +194,11 @@ def gerenciar_eventos(request):
     return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import EventoForm
+
 @login_required
 def criar_evento(request):
     if request.method == 'POST':
@@ -219,15 +207,19 @@ def criar_evento(request):
             evento = form.save(commit=False)
             evento.organizador = request.user
             evento.aprovado = False
+            evento.publicado = False
             evento.save()
-            messages.success(request, 'Evento criado e enviado para aprovação!')
+            messages.success(request, 'Evento criado com sucesso! Aguarde a aprovação.')
             return redirect('gerenciar_eventos')
+        else:
+            messages.error(request, 'Por favor, corrija os erros no formulário.')
     else:
         form = EventoForm()
     
     return render(request, 'gestao/evento_form.html', {
         'form': form, 
-        'titulo': 'Novo Evento'
+        'titulo': 'Novo Evento',
+        'btn_texto': 'Criar Evento'
     })
 
 
@@ -353,3 +345,25 @@ def marcar_presenca(request, inscricao_id):
     status = "confirmada" if presenca.presente else "removida"
     messages.success(request, f"Presença de {inscricao.participante.username} {status}.")
     return redirect('ver_inscritos', pk=inscricao.evento.id)
+
+@login_required
+def inscrever_evento(request, evento_id):
+    evento = get_object_or_404(Evento, pk=evento_id)
+    if Inscricao.objects.filter(evento=evento, participante=request.user).exists():
+        messages.warning(request, "Você já está inscrito neste evento.")
+        return redirect('detalhes_evento', pk=evento.id)
+    
+    if request.method == 'POST':
+        form = InscricaoEventoForm(request.POST)
+        if form.is_valid():
+            inscricao = form.save(commit=False)
+            inscricao.participante = request.user
+            inscricao.evento = evento
+            inscricao.save()
+            messages.success(request, "Inscrição confirmada com sucesso!")
+            
+            return redirect('detalhes_evento', pk=evento.id)
+    else:
+        form = InscricaoEventoForm()
+
+    return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})

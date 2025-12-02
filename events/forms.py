@@ -32,6 +32,8 @@ class EventoForm(forms.ModelForm):
         }
         labels = {
             'titulo': 'Título do Evento',
-            'descricao': 'Descrição Completa'
+            'local': 'Localização',
+            'descricao': 'Descrição Completa',
+            'data': 'Data do Evento'
         }
 
