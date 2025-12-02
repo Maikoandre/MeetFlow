@@ -208,6 +208,7 @@
                                     <th>Data</th>
                                     <th>Local</th>
                                     <th>Minha Situação</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -224,6 +225,16 @@
                                         {% else %}
                                             <label class="badge badge-danger">Cancelado</label>
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if inscricao.status != 'confirmado' %}
+                                            <a href="{% url 'confirmar_inscricao' inscricao.evento.id %}" class="btn btn-sm btn-success me-1" title="Confirmar Inscrição">
+                                                <i class="mdi mdi-check-circle"></i>
+                                            </a>
+                                        {% endif %}
+                                        <a href="{% url 'cancelar_inscricao' inscricao.evento.id %}" class="btn btn-sm btn-danger" title="Cancelar Inscrição">
+                                            <i class="mdi mdi-trash-can"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 {% empty %}

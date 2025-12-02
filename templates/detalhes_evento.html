@@ -19,26 +19,18 @@
                     <p><i class="mdi mdi-map-marker text-danger"></i> {{ evento.local }}</p>
                 </div>
                 
-                <div class="col-md-4 border-start">
-                    <div class="text-center">
-                        <h6 class="text-muted">Organizado por</h6>
-                        <p class="fw-bold">{{ evento.organizador.get_full_name|default:evento.organizador.username }}</p>
-                        
-                        {% if user.is_authenticated %}
-                            {% if ja_inscrito %}
-                                <button class="btn btn-secondary w-100" disabled>
-                                    <i class="mdi mdi-check-circle"></i> Já Inscrito
-                                </button>
-                            {% else %}
-                                <a href="{% url 'inscrever_evento' evento.id %}" class="btn btn-success w-100 py-2">
-                                    Inscrever-me Agora
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary w-100">
-                                Faça login para participar
-                            </a>
-                        {% endif %}
+                <div class="col-md-4">
+                    <div class="card bg-light border-0">
+                        <div class="card-body">
+                            <h6 class="fw-bold"><i class="mdi mdi-calendar"></i> Data</h6>
+                            <p>{{ evento.data|date:"d \d\e F \d\e Y" }}</p>
+                            
+                            <h6 class="fw-bold mt-3"><i class="mdi mdi-map-marker"></i> Local</h6>
+                            <p>{{ evento.local }}</p>
+                            
+                            <h6 class="fw-bold mt-3"><i class="mdi mdi-account"></i> Organizador</h6>
+                            <p>{{ evento.organizador.username }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -15,13 +15,20 @@ from .models import Evento, Inscricao, Usuario, Presenca
 
 
 def index(request):
+    total_eventos = Evento.objects.filter(publicado=True, aprovado=True).count()
+    total_participantes = Usuario.objects.count()
+
     if request.user.is_authenticated:
         try:
             return dashboard(request)
         except Exception:
-            return render(request, 'index.html')
-            
-    return render(request, 'index.html')
+            pass 
+
+    return render(request, 'index.html', {
+        'total_eventos': total_eventos,
+        'total_participantes': total_participantes,
+    })
+
 
 
 @login_required
