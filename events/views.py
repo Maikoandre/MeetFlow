@@ -311,6 +311,7 @@ def relatorio_admin(request):
         'status_counts': status_counts,
         'top_eventos': top_eventos,
     }
+    return render(request, 'gestao/relatorio_admin.html', context)
 
 @login_required
 def ver_inscritos(request, pk):
