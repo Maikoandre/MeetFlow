@@ -11,7 +11,7 @@ from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import EventoForm, InscricaoEventoForm, UsuarioForm, PresencaForm
-from .models import Evento, Inscricao, Usuario, Presenca
+from .models import Evento, Inscricao, Usuario, Presenca, Relatorio
 
 
 def index(request):
@@ -450,3 +450,21 @@ def deletar_presenca(request, pk):
         'evento': presenca,
         'titulo_confirmacao': f"remover a presença de {presenca.inscricao.participante.username}"
     })
+
+@login_required
+def gerar_relatorio(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    if evento.organizador != request.user and not request.user.is_superuser:
+        messages.error(request, "Não tem permissão para gerar relatórios deste evento.")
+        return redirect('dashboard_user')
+
+    total_inscritos = evento.inscricoes.count()
+    total_presentes = Presenca.objects.filter(inscricao__evento=evento, presente=True).count()
+    Relatorio.objects.create(
+        evento=evento,
+        total_inscritos=total_inscritos,
+        total_presentes=total_presentes
+    )
+
+    messages.success(request, "Relatório de estatísticas gerado com sucesso!")
+    return redirect('detalhes_evento', pk=evento.pk)
