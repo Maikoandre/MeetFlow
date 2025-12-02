@@ -23,6 +23,8 @@ urlpatterns = [
     path('inscricao/<int:inscricao_id>/presenca/', views.marcar_presenca, name='marcar_presenca'),
     path('inscricao/<int:pk>/editar/', views.editar_inscricao, name='editar_inscricao'),
     path('inscricao/<int:pk>/deletar/', views.deletar_inscricao, name='deletar_inscricao'),
+    # --- Presença ---
+    path('presenca/<int:pk>/editar/', views.editar_presenca, name='editar_presenca'),
     # --- Perfil do Usuário ---
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('perfil/senha/', views.alterar_senha, name='alterar_senha'),

@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import EventoForm, InscricaoEventoForm, UsuarioForm
+from .forms import EventoForm, InscricaoEventoForm, UsuarioForm, PresencaForm
 from .models import Evento, Inscricao, Usuario, Presenca
 
 
@@ -386,7 +386,7 @@ def editar_inscricao(request, pk):
 
 @login_required
 def deletar_inscricao(request, pk):
-    
+
     inscricao = get_object_or_404(Inscricao, pk=pk)
     evento_id = inscricao.evento.id
     
@@ -407,4 +407,27 @@ def deletar_inscricao(request, pk):
     return render(request, 'gestao/evento_confirmar_delete.html', {
         'evento': inscricao,
         'titulo_confirmacao': f"cancelar a inscrição de {inscricao.participante.username}"
+    })
+
+
+@login_required
+def editar_presenca(request, pk):
+    presenca = get_object_or_404(Presenca, pk=pk)
+    if presenca.inscricao.evento.organizador != request.user:
+        messages.error(request, "Apenas o organizador pode editar esta presença.")
+        return redirect('dashboard_user')
+
+    if request.method == 'POST':
+        form = PresencaForm(request.POST, instance=presenca)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Estado da presença atualizado com sucesso!')
+            return redirect('ver_inscritos', pk=presenca.inscricao.evento.pk)
+    else:
+        form = PresencaForm(instance=presenca)
+
+    return render(request, 'gestao/evento_form.html', {
+        'form': form,
+        'titulo': f'Editar Presença: {presenca.inscricao.participante.username}',
+        'btn_texto': 'Guardar Alterações'
     })

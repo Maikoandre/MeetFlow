@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Inscricao, Usuario, Evento, Inscricao
+from .models import Inscricao, Usuario, Evento, Inscricao, Presenca
 
 class InscricaoEventoForm(forms.ModelForm):
     class Meta:
@@ -46,4 +46,12 @@ class InscricaoStatusForm(forms.ModelForm):
         }
         labels = {
             'status': 'Estado da Inscrição'
+        }
+
+class PresencaForm(forms.ModelForm):
+    class Meta:
+        model = Presenca
+        fields = ['presente']
+        widgets = {
+            'presente': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
