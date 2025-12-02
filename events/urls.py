@@ -10,14 +10,12 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard_user'),
     # --- Eventos ---
     path('eventos/', views.eventos_lista, name='eventos'),
-    path('eventos/<int:evento_id>/inscrever/', views.inscrever_evento, name='inscrever_evento'),
-    path('eventos/<int:pk>/', views.detalhes_evento, name='detalhes_evento'),
-    path('eventos/gerenciar/', views.gerenciar_eventos, name='gerenciar_eventos'),
     path('eventos/novo/', views.criar_evento, name='criar_evento'),
+    path('eventos/gerenciar/', views.gerenciar_eventos, name='gerenciar_eventos'),
+    path('eventos/<int:pk>/', views.detalhes_evento, name='detalhes_evento'),
     path('eventos/<int:pk>/editar/', views.editar_evento, name='editar_evento'),
     path('eventos/<int:pk>/deletar/', views.deletar_evento, name='deletar_evento'),
-    # Alias usado em templates antigos/externos
-    path('eventos/<int:pk>/excluir/', views.deletar_evento, name='excluir_evento'),
+    path('eventos/<int:evento_id>/inscrever/', views.inscrever_evento, name='inscrever_evento'),
     path('eventos/<int:pk>/aprovar/', views.aprovar_evento, name='aprovar_evento'),
     path('eventos/<int:pk>/publicar/', views.publicar_evento, name='publicar_evento'),
     path('eventos/<int:pk>/inscritos/', views.ver_inscritos, name='ver_inscritos'),

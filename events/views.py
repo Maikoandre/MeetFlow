@@ -109,18 +109,6 @@ def login_view(request):
     return render(request, 'pages/samples/login.html', {'form': form})
 
 
-def detalhes_evento(request, pk):
-    evento = get_object_or_404(Evento, pk=pk)
-    ja_inscrito = False
-    if request.user.is_authenticated:
-        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
-
-    return render(request, 'detalhes_evento.html', {
-        'evento': evento,
-        'ja_inscrito': ja_inscrito
-    })
-
-
 def cadastro_usuario(request):
     if request.method == 'POST':
         user_form = UserCreationForm(request.POST)
@@ -176,29 +164,6 @@ def alterar_senha(request):
     return render(request, 'forms/usuario_senha.html', {'form': form})
 
 
-def detalhes_evento(request, pk):
-    evento = get_object_or_404(Evento, pk=pk)
-    ja_inscrito = False
-    if request.user.is_authenticated:
-        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
-
-    return render(request, 'detalhes_evento.html', {
-        'evento': evento,
-        'ja_inscrito': ja_inscrito
-    })
-
-
-@login_required
-def gerenciar_eventos(request):
-    eventos = Evento.objects.filter(organizador=request.user).order_by('-data')
-    return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .forms import EventoForm
-
 @login_required
 def criar_evento(request):
     if request.method == 'POST':
@@ -230,8 +195,8 @@ def editar_evento(request, pk):
     if request.method == 'POST':
         form = EventoForm(request.POST, instance=evento)
         if form.is_valid():
-            evento_salvo = form.save(commit=False)
-            evento_salvo.save()
+            evento = form.save(commit=False)
+            evento.save()
             messages.success(request, 'Evento atualizado com sucesso!')
             return redirect('gerenciar_eventos')
     else:
@@ -239,17 +204,20 @@ def editar_evento(request, pk):
         
     return render(request, 'gestao/evento_form.html', {
         'form': form, 
-        'titulo': f'Editar: {evento.titulo}'
+        'titulo': f'Editar: {evento.titulo}',
+        'btn_texto': 'Atualizar Evento'
     })
 
 
 @login_required
 def deletar_evento(request, pk):
     evento = get_object_or_404(Evento, pk=pk, organizador=request.user)
+    
     if request.method == 'POST':
         evento.delete()
-        messages.success(request, 'Evento cancelado/excluído com sucesso.')
+        messages.success(request, 'Evento eliminado com sucesso.')
         return redirect('gerenciar_eventos')
+    
     return render(request, 'gestao/evento_confirmar_delete.html', {'evento': evento})
 
 
@@ -367,3 +335,22 @@ def inscrever_evento(request, evento_id):
         form = InscricaoEventoForm()
 
     return render(request, 'forms/evento_inscricao.html', {'form': form, 'evento': evento})
+
+@login_required
+def gerenciar_eventos(request):
+    """ R (Read - List): Lista os eventos do organizador para gestão """
+    eventos = Evento.objects.filter(organizador=request.user).order_by('-data')
+    return render(request, 'gestao/gerenciar_eventos.html', {'eventos': eventos})
+
+def detalhes_evento(request, pk):
+    """ R (Read - Detail): Mostra os detalhes de um evento único """
+    evento = get_object_or_404(Evento, pk=pk)
+    ja_inscrito = False
+    
+    if request.user.is_authenticated:
+        ja_inscrito = Inscricao.objects.filter(evento=evento, participante=request.user).exists()
+
+    return render(request, 'detalhes_evento.html', {
+        'evento': evento,
+        'ja_inscrito': ja_inscrito
+    })
