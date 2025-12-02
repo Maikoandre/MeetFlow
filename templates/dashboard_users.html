@@ -6,15 +6,15 @@
 
 <div class="row">
     <div class="col-md-12 grid-margin">
-        <div class=" align-items-baseline report-summary-header">
-            <h5 class="font-weight-semibold">Olá, {{ perfil.nome }}!</h5> 
+        <div class="align-items-baseline report-summary-header">
+            <h5 class="font-weight-semibold">Olá, {{ perfil.nome }}!</h5>
             <h1 class="ml-auto text-muted">Painel do {{ perfil.get_tipo_display }}</h1>
         </div>
     </div>
 </div>
 
 {% if perfil.tipo == 'admin' %}
-    
+
     <div class="row">
         <div class="col-md-4 grid-margin stretch-card">
             <div class="card bg-primary text-white">
@@ -43,11 +43,12 @@
         </div>
     </div>
 
+    <!-- Tabelas Admin -->
     <div class="row">
         <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Aprovar Eventos</h4>
+                    <h4 class="card-title">Gerenciar Aprovação e Publicação</h4>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -59,16 +60,40 @@
                                 </tr>
                             </thead>
                             <tbody>
+
+                                
                                 {% for evento in lista_pendentes %}
                                 <tr>
-                                    <td>{{ evento.titulo }}</td>
-                                    <td>{{ evento.organizador.usuario.nome }}</td> <td>{{ evento.data|date:"d/m/Y" }}</td>
-                                    <td>
-                                        <a href="{% url 'aprovar_evento' evento.pk %}" class="btn btn-success btn-sm">Aprovar</a> </td>
+                                    <td class="p-3">{{ evento.titulo }}</td>
+                                    <td class="p-3">{{ evento.organizador }}</td>
+                                    <td class="p-3">{{ evento.data|date:"d/m/Y" }}</td>
+                                    <td class="p-3">
+                                        <a href="{% url 'aprovar_evento' evento.pk %}" class="btn btn-success btn-sm">Aprovar</a>
+                                    </td>
                                 </tr>
-                                {% empty %}
-                                <tr><td colspan="4">Nenhum evento pendente.</td></tr>
                                 {% endfor %}
+
+                            
+                                {% for evento in lista_a_publicar %}
+                                <tr>
+                                    <td class="p-3">{{ evento.titulo }}</td>
+                                    <td class="p-3">{{ evento.organizador }}</td>
+                                    <td class="p-3">{{ evento.data|date:"d/m/Y" }}</td>
+                                    <td class="p-3">
+                                        <a href="{% url 'publicar_evento' evento.pk %}" class="btn btn-success btn-sm">Publicar</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for evento in lista_publicados %}
+                                <tr>
+                                    <td class="p-3">{{ evento.titulo }}</td>
+                                    <td class="p-3">{{ evento.organizador }}</td>
+                                    <td class="p-3">{{ evento.data|date:"d/m/Y" }}</td>
+                                    <td class="p-3"> <span class="p-1 bg-primary text-white">Publicado</span></td>
+                                </tr>
+                                {% endfor %}
+
                             </tbody>
                         </table>
                     </div>
@@ -104,7 +129,7 @@
         <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <a href="{% url 'gerenciar_eventos' %}"> <h4 class="card-title">Gerenciar Meus Eventos</h4></a> 
+                    <a href="{% url 'gerenciar_eventos' %}"><h4 class="card-title">Gerenciar Meus Eventos</h4></a>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -204,7 +229,7 @@
                                 {% empty %}
                                 <tr>
                                     <td colspan="4">
-                                        Você não está inscrito em eventos. 
+                                        Você não está inscrito em eventos.
                                         <a href="{% url 'eventos' %}">Ver eventos disponíveis</a>
                                     </td>
                                 </tr>

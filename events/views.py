@@ -36,8 +36,18 @@ def dashboard(request):
             'total_eventos': Evento.objects.count(),
             'total_usuarios': Usuario.objects.count(),
             'eventos_pendentes': Evento.objects.filter(aprovado=False).count(),
-            'lista_pendentes': Evento.objects.filter(aprovado=False),
+            # Prepara lista de pendentes com nome seguro do organizador para evitar
+            # RelatedObjectDoesNotExist ao acessar `organizador.usuario` no template.
+            'lista_pendentes': Evento.objects.filter(aprovado=False).select_related('organizador'),
+            'lista_a_publicar': Evento.objects.filter(aprovado=True, publicado=False).select_related('organizador'),
+            'lista_publicados': Evento.objects.filter(publicado=True).select_related('organizador'),
         })
+        # Adiciona atributo organizador_nome para cada evento (fallback para username)
+        for ev in context['lista_pendentes']:
+            try:
+                ev.organizador_nome = ev.organizador.usuario.nome
+            except Exception:
+                ev.organizador_nome = getattr(ev.organizador, 'username', 'Organizador')
 
     elif usuario.tipo == 'organizador':
         meus_eventos = Evento.objects.filter(organizador=request.user)
@@ -246,30 +256,38 @@ def deletar_evento(request, pk):
 
 @login_required
 def aprovar_evento(request, pk):
-    # Somente usuários staff/superuser podem aprovar
-    if not (request.user.is_superuser or request.user.is_staff):
+    # Permite superuser, staff ou usuários com perfil Usuario.tipo == 'admin'
+    if not (
+        request.user.is_superuser or
+        request.user.is_staff or
+        (hasattr(request.user, 'usuario') and getattr(request.user.usuario, 'tipo', None) == 'admin')
+    ):
         messages.error(request, 'Permissão negada.')
-        return redirect('eventos')
+        return redirect('dashboard_user')
 
     evento = get_object_or_404(Evento, pk=pk)
     evento.aprovado = True
     evento.save()
     messages.success(request, 'Evento aprovado com sucesso.')
-    return redirect('eventos')
+    return redirect('dashboard_user')
 
 
 @login_required
 def publicar_evento(request, pk):
     # Somente usuários staff/superuser podem publicar
-    if not (request.user.is_superuser or request.user.is_staff):
+    if not (
+        request.user.is_superuser or
+        request.user.is_staff or
+        (hasattr(request.user, 'usuario') and getattr(request.user.usuario, 'tipo', None) == 'admin')
+    ):
         messages.error(request, 'Permissão negada.')
-        return redirect('eventos')
+        return redirect('dashboard_user')
 
     evento = get_object_or_404(Evento, pk=pk)
     evento.publicado = True
     evento.save()
     messages.success(request, 'Evento publicado com sucesso.')
-    return redirect('eventos')
+    return redirect('dashboard_user')
 
 def is_admin(user):
     return user.is_superuser or (hasattr(user, 'usuario') and user.usuario.tipo == 'admin')
