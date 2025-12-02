@@ -4,7 +4,7 @@
     <div class="card-header bg-primary text-white py-4">
       <h2 class="mb-0">{{ evento.titulo }}</h2>
       <p class="mb-0 opacity-75">
-        <i class="mdi mdi-calendar">{{ evento.data|date:"d \d\e F \d\e Y" }}</i> 
+        <i class="mdi mdi-calendar">{{ evento.data|date:"d \d\e F \d\e Y" }}</i>
       </p>
     </div>
     <div class="card-body p-5">
@@ -46,6 +46,13 @@
                   title="Ver"
                 >
                   <i class="mdi mdi-eye"></i>
+                </a>
+                <a
+                  href="{% url 'lista_relatorios' evento.id %}"
+                  class="btn btn-sm btn-outline-primary me-1"
+                  title="Ver Relatórios"
+                >
+                  <i class="mdi mdi-file-document"></i> Relatórios
                 </a>
               </p>
               {% if user == evento.organizador or user.is_superuser %}

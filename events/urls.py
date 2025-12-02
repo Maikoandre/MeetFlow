@@ -28,6 +28,10 @@ urlpatterns = [
     path('presenca/<int:pk>/deletar/', views.deletar_presenca, name='deletar_presenca'),
     # --- Relatório ---
     path('eventos/<int:pk>/relatorio/gerar/', views.gerar_relatorio, name='gerar_relatorio'),
+    # --- Gestão de Relatórios do Evento ---
+    path('eventos/<int:evento_id>/relatorios/', views.lista_relatorios, name='lista_relatorios'),
+    path('eventos/<int:pk>/relatorio/gerar/', views.gerar_relatorio, name='gerar_relatorio'),
+    path('relatorios/<int:pk>/', views.detalhes_relatorio, name='detalhes_relatorio'),
     # --- Perfil do Usuário ---
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('perfil/senha/', views.alterar_senha, name='alterar_senha'),
