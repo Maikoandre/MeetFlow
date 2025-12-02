@@ -1,60 +1,82 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-5">
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white py-4">
-            <h2 class="mb-0">{{ evento.titulo }}</h2>
-            <p class="mb-0 opacity-75"><i class="mdi mdi-calendar"></i> {{ evento.data|date:"l, d \d\e F \d\e Y" }}</p>
-        </div>
-        <div class="card-body p-5">
-            <div class="row">
-                <div class="col-md-8">
-                    <h5 class="fw-bold text-secondary">Sobre o Evento</h5>
-                    <p class="fs-5">{{ evento.descricao|linebreaks }}</p>
-                    
-                    <hr class="my-4">
-                    
-                    <h5 class="fw-bold text-secondary">Localização</h5>
-                    <p><i class="mdi mdi-map-marker text-danger"></i> {{ evento.local }}</p>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="card bg-light border-0">
-                        <div class="card-body">
-                            <h6 class="fw-bold"><i class="mdi mdi-calendar"></i> Data</h6>
-                            <p>{{ evento.data|date:"d \d\e F \d\e Y" }}</p>
-                            
-                            <h6 class="fw-bold mt-3"><i class="mdi mdi-map-marker"></i> Local</h6>
-                            <p>{{ evento.local }}</p>
-                            
-                            <h6 class="fw-bold mt-3"><i class="mdi mdi-account"></i> Organizador</h6>
-                            <p>{{ evento.organizador.username }}</p>
-                            <h6 class="fw-bold mt-3"><i class="mdi mdi-account"></i>Ver inscritos</h6>
-                            <p>
-                                <a href="{% url 'ver_inscritos' pk=evento.pk%}" class="btn btn-sm btn-outline-info me-1" title="Ver">
-                                        <i class="mdi mdi-eye"></i>
-                                </a>
-                            </p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% if perfil.tipo == 'Organizador' %}
-        <div class="card-footer bg-white p-3">
-            <a href="{% url 'gerenciar_eventos' %}" class="text-decoration-none text-muted">
-                <i class="mdi mdi-arrow-left"></i> Voltar à lista
-            </a>
-        </div>
-        {% else %}
-        <div class="card-footer bg-white p-3">
-            <a href="{% url 'eventos' %}" class="text-decoration-none text-muted">
-                <i class="mdi mdi-arrow-left"></i> Voltar à lista
-            </a>
-        </div>
-        {% endif %}
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white py-4">
+      <h2 class="mb-0">{{ evento.titulo }}</h2>
+      <p class="mb-0 opacity-75">
+        <i class="mdi mdi-calendar">{{ evento.data|date:"d \d\e F \d\e Y" }}</i> 
+      </p>
     </div>
+    <div class="card-body p-5">
+      <div class="row">
+        <div class="col-md-8">
+          <h5 class="fw-bold text-secondary">Sobre o Evento</h5>
+          <p class="fs-5">{{ evento.descricao|linebreaks }}</p>
+
+          <hr class="my-4" />
+
+          <h5 class="fw-bold text-secondary">Localização</h5>
+          <p>
+            <i class="mdi mdi-map-marker text-danger"></i> {{ evento.local }}
+          </p>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card bg-light border-0">
+            <div class="card-body">
+              <h6 class="fw-bold"><i class="mdi mdi-calendar"></i> Data</h6>
+              <p>{{ evento.data|date:"d \d\e F \d\e Y" }}</p>
+
+              <h6 class="fw-bold mt-3">
+                <i class="mdi mdi-map-marker"></i> Local
+              </h6>
+              <p>{{ evento.local }}</p>
+
+              <h6 class="fw-bold mt-3">
+                <i class="mdi mdi-account"></i> Organizador
+              </h6>
+              <p>{{ evento.organizador.username }}</p>
+              <h6 class="fw-bold mt-3">
+                <i class="mdi mdi-account"></i>Ver inscritos
+              </h6>
+              <p>
+                <a
+                  href="{% url 'ver_inscritos' pk=evento.pk%}"
+                  class="btn btn-sm btn-outline-info me-1"
+                  title="Ver"
+                >
+                  <i class="mdi mdi-eye"></i>
+                </a>
+              </p>
+              {% if user == evento.organizador or user.is_superuser %}
+              <a
+                href="{% url 'gerar_relatorio' evento.id %}"
+                class="btn btn-primary"
+              >
+                <i class="fa fa-bar-chart"></i> Gerar Relatório Atual
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if perfil.tipo == 'Organizador' %}
+    <div class="card-footer bg-white p-3">
+      <a
+        href="{% url 'gerenciar_eventos' %}"
+        class="text-decoration-none text-muted"
+      >
+        <i class="mdi mdi-arrow-left"></i> Voltar à lista
+      </a>
+    </div>
+    {% else %}
+    <div class="card-footer bg-white p-3">
+      <a href="{% url 'eventos' %}" class="text-decoration-none text-muted">
+        <i class="mdi mdi-arrow-left"></i> Voltar à lista
+      </a>
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

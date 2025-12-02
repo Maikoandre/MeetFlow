@@ -26,6 +26,8 @@ urlpatterns = [
     # --- Presença ---
     path('presenca/<int:pk>/editar/', views.editar_presenca, name='editar_presenca'),
     path('presenca/<int:pk>/deletar/', views.deletar_presenca, name='deletar_presenca'),
+    # --- Relatório ---
+    path('eventos/<int:pk>/relatorio/gerar/', views.gerar_relatorio, name='gerar_relatorio'),
     # --- Perfil do Usuário ---
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('perfil/senha/', views.alterar_senha, name='alterar_senha'),

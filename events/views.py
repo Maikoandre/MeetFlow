@@ -468,3 +468,25 @@ def gerar_relatorio(request, pk):
 
     messages.success(request, "Relatório de estatísticas gerado com sucesso!")
     return redirect('detalhes_evento', pk=evento.pk)
+
+@login_required
+def lista_relatorios(request, evento_id):
+    evento = get_object_or_404(Evento, pk=evento_id)
+    if evento.organizador != request.user and not request.user.is_superuser:
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    relatorios = Relatorio.objects.filter(evento=evento).order_by('-data_geracao')
+    return render(request, 'gestao/relatorio_lista.html', {
+        'evento': evento,
+        'relatorios': relatorios
+    })
+
+@login_required
+def detalhes_relatorio(request, pk):
+    relatorio = get_object_or_404(Relatorio, pk=pk)
+    if relatorio.evento.organizador != request.user and not request.user.is_superuser:
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    return render(request, 'gestao/relatorio_detalhe.html', {'relatorio': relatorio})
