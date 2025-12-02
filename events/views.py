@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import EventoForm, InscricaoEventoForm, UsuarioForm, PresencaForm
+from .forms import EventoForm, InscricaoEventoForm, UsuarioForm, PresencaForm, RelatorioForm
 from .models import Evento, Inscricao, Usuario, Presenca, Relatorio
 
 
@@ -490,3 +490,44 @@ def detalhes_relatorio(request, pk):
         return redirect('dashboard_user')
 
     return render(request, 'gestao/relatorio_detalhe.html', {'relatorio': relatorio})
+
+
+@login_required
+def editar_relatorio(request, pk):
+    relatorio = get_object_or_404(Relatorio, pk=pk)
+    if relatorio.evento.organizador != request.user and not request.user.is_superuser:
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    if request.method == 'POST':
+        form = RelatorioForm(request.POST, instance=relatorio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Dados do relatório atualizados manualmente.')
+            return redirect('detalhes_relatorio', pk=relatorio.pk)
+    else:
+        form = RelatorioForm(instance=relatorio)
+
+    return render(request, 'gestao/evento_form.html', {
+        'form': form,
+        'titulo': f'Editar Relatório: {relatorio.evento.titulo}',
+        'btn_texto': 'Salvar Correções'
+    })
+
+@login_required
+def deletar_relatorio(request, pk):
+    relatorio = get_object_or_404(Relatorio, pk=pk)
+    evento_id = relatorio.evento.id
+    if relatorio.evento.organizador != request.user and not request.user.is_superuser:
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    if request.method == 'POST':
+        relatorio.delete()
+        messages.success(request, 'Relatório removido do histórico.')
+        return redirect('lista_relatorios', evento_id=evento_id)
+    
+    return render(request, 'gestao/evento_confirmar_delete.html', {
+        'evento': relatorio, 
+        'titulo_confirmacao': f"apagar o relatório gerado em {relatorio.data_geracao}"
+    })
