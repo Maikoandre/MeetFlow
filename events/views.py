@@ -431,3 +431,22 @@ def editar_presenca(request, pk):
         'titulo': f'Editar Presença: {presenca.inscricao.participante.username}',
         'btn_texto': 'Guardar Alterações'
     })
+
+@login_required
+def deletar_presenca(request, pk):
+    presenca = get_object_or_404(Presenca, pk=pk)
+    evento_id = presenca.inscricao.evento.id
+    
+    if presenca.inscricao.evento.organizador != request.user:
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    if request.method == 'POST':
+        presenca.delete()
+        messages.success(request, 'Presença removida com sucesso.')
+        return redirect('ver_inscritos', pk=evento_id)
+    
+    return render(request, 'gestao/evento_confirmar_delete.html', {
+        'evento': presenca,
+        'titulo_confirmacao': f"remover a presença de {presenca.inscricao.participante.username}"
+    })
