@@ -377,9 +377,34 @@ def editar_inscricao(request, pk):
             return redirect('ver_inscritos', pk=inscricao.evento.pk)
     else:
         form = InscricaoStatusForm(instance=inscricao)
-        
+
     return render(request, 'gestao/evento_form.html', {
         'form': form,
         'titulo': f'Gerir Inscrição: {inscricao.participante.username}',
         'btn_texto': 'Atualizar Status'
+    })
+
+@login_required
+def deletar_inscricao(request, pk):
+    
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    evento_id = inscricao.evento.id
+    
+    is_dono = request.user == inscricao.evento.organizador
+    is_proprio = request.user == inscricao.participante
+    
+    if not (is_dono or is_proprio or request.user.is_superuser):
+        messages.error(request, "Permissão negada.")
+        return redirect('index')
+
+    if request.method == 'POST':
+        inscricao.delete()
+        messages.success(request, 'Inscrição cancelada/removida.')
+        if is_dono:
+            return redirect('ver_inscritos', pk=evento_id)
+        return redirect('dashboard_user')
+
+    return render(request, 'gestao/evento_confirmar_delete.html', {
+        'evento': inscricao,
+        'titulo_confirmacao': f"cancelar a inscrição de {inscricao.participante.username}"
     })
