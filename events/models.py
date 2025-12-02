@@ -59,5 +59,3 @@ class Relatorio(models.Model):
 
     def __str__(self):
         return f"Relatório - {self.evento.titulo}"
-
-    

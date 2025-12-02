@@ -1,6 +1,6 @@
 from django.shortcuts import render,  redirect, get_object_or_404
 from .models import Evento, Usuario, Inscricao
-from .forms import InscricaoEventoForm, EventoForm
+from .forms import InscricaoEventoForm, EventoForm, InscricaoStatusForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from django.contrib.auth import update_session_auth_hash, authenticate
@@ -360,4 +360,26 @@ def detalhes_evento(request, pk):
     return render(request, 'detalhes_evento.html', {
         'evento': evento,
         'ja_inscrito': ja_inscrito
+    })
+
+@login_required
+def editar_inscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    if not (request.user == inscricao.evento.organizador or request.user.is_superuser):
+        messages.error(request, "Permissão negada.")
+        return redirect('dashboard_user')
+
+    if request.method == 'POST':
+        form = InscricaoStatusForm(request.POST, instance=inscricao)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Estado da inscrição atualizado!')
+            return redirect('ver_inscritos', pk=inscricao.evento.pk)
+    else:
+        form = InscricaoStatusForm(instance=inscricao)
+        
+    return render(request, 'gestao/evento_form.html', {
+        'form': form,
+        'titulo': f'Gerir Inscrição: {inscricao.participante.username}',
+        'btn_texto': 'Atualizar Status'
     })

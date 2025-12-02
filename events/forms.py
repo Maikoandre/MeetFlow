@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Inscricao, Usuario, Evento
+from .models import Inscricao, Usuario, Evento, Inscricao
 
 class InscricaoEventoForm(forms.ModelForm):
     class Meta:
@@ -37,3 +37,13 @@ class EventoForm(forms.ModelForm):
             'data': 'Data do Evento'
         }
 
+class InscricaoStatusForm(forms.ModelForm):
+    class Meta:
+        model = Inscricao
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-select'})
+        }
+        labels = {
+            'status': 'Estado da Inscrição'
+        }
