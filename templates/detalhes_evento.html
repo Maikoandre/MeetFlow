@@ -30,6 +30,13 @@
                             
                             <h6 class="fw-bold mt-3"><i class="mdi mdi-account"></i> Organizador</h6>
                             <p>{{ evento.organizador.username }}</p>
+                            <h6 class="fw-bold mt-3"><i class="mdi mdi-account"></i>Ver inscritos</h6>
+                            <p>
+                                <a href="{% url 'ver_inscritos' pk=evento.pk%}" class="btn btn-sm btn-outline-info me-1" title="Ver">
+                                        <i class="mdi mdi-eye"></i>
+                                </a>
+                            </p>
+
                         </div>
                     </div>
                 </div>

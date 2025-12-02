@@ -1,60 +1,91 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-5">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+  {% if messages %} {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %} {% endif %}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Gestão de Presença: {{ evento.titulo }}</h3>
-        <a href="{% url 'gerenciar_eventos' %}" class="btn btn-outline-secondary">Voltar para Eventos</a>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Gestão de Presença: {{ evento.titulo }}</h3>
+    <a href="{% url 'gerenciar_eventos' %}" class="btn btn-outline-secondary"
+      >Voltar para Eventos</a
+    >
+  </div>
+
+  <div class="card shadow">
+    <div class="card-header bg-light">
+      <div class="row fw-bold">
+        <div class="col-md-4">Participante</div>
+        <div class="col-md-3">Status Inscrição</div>
+        <div class="col-md-5 text-end">Ação</div>
+      </div>
     </div>
-    
-    <div class="card shadow">
-        <div class="card-header bg-light">
-            <div class="row fw-bold">
-                <div class="col-md-4">Participante</div>
-                <div class="col-md-3">Status Inscrição</div>
-                <div class="col-md-5 text-end">Ação</div>
+    <ul class="list-group list-group-flush">
+      {% for item in lista_inscritos %}
+      <li class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <h5 class="mb-0">{{ item.inscricao.participante.username }}</h5>
+            <small class="text-muted"
+              >{{ item.inscricao.participante.email }}</small
+            >
+          </div>
+          <div class="col-md-3">
+            <span class="badge bg-info text-dark"
+              >{{ item.inscricao.get_status_display }}</span
+            >
+          </div>
+          <div class="col-md-5 text-end">
+            {% if item.presente %}
+            <a
+              href="{% url 'marcar_presenca' item.inscricao.id %}"
+              class="btn btn-success text-white btn-sm"
+            >
+              <i class="mdi mdi-check-circle"></i> Confirmado
+            </a>
+            <a
+              href="{% url 'marcar_presenca' item.inscricao.id %}"
+              class="btn btn-outline-danger btn-sm ms-1"
+              title="Desmarcar"
+            >
+              <i class="mdi mdi-close"></i>
+            </a>
+            {% else %}
+            <a
+              href="{% url 'marcar_presenca' item.inscricao.id %}"
+              class="btn btn-outline-secondary btn-sm"
+            >
+              Marcar Presença
+            </a>
+            {% endif %}
+
+            <div class="d-inline-block ms-2 border-start ps-2">
+              <a
+                href="{% url 'editar_inscricao' item.inscricao.id %}"
+                class="btn btn-sm btn-primary"
+                title="Alterar Estado"
+              >
+                <i class="mdi mdi-pencil"></i>
+              </a>
+              <a
+                href="{% url 'deletar_inscricao' item.inscricao.id %}"
+                class="btn btn-sm btn-danger"
+                title="Cancelar Inscrição"
+              >
+                <i class="mdi mdi-delete"></i>
+              </a>
             </div>
+          </div>
         </div>
-        <ul class="list-group list-group-flush">
-            {% for item in lista_inscritos %}
-            <li class="list-group-item">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <h5 class="mb-0">{{ item.inscricao.participante.username }}</h5>
-                        <small class="text-muted">{{ item.inscricao.participante.email }}</small>
-                    </div>
-                    <div class="col-md-3">
-                        <span class="badge bg-info text-dark">{{ item.inscricao.get_status_display }}</span>
-                    </div>
-                    <div class="col-md-5 text-end">
-                        {% if item.presente %}
-                            <a href="{% url 'marcar_presenca' item.inscricao.id %}" class="btn btn-success text-white">
-                                <i class="bi bi-check-circle-fill"></i> Confirmado
-                            </a>
-                            <a href="{% url 'marcar_presenca' item.inscricao.id %}" class="btn btn-outline-danger btn-sm ms-2" title="Desmarcar">
-                                <i class="bi bi-x"></i>
-                            </a>
-                        {% else %}
-                            <a href="{% url 'marcar_presenca' item.inscricao.id %}" class="btn btn-outline-secondary">
-                                Marcar Presença
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </li>
-            {% empty %}
-            <li class="list-group-item text-center py-4">Nenhum inscrito neste evento ainda.</li>
-            {% endfor %}
-        </ul>
-    </div>
+      </li>
+      {% empty %}
+      <li class="list-group-item text-center py-4">
+        Nenhum inscrito neste evento ainda.
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 {% endblock %}
