@@ -539,7 +539,35 @@ def confirmar_inscricao(request, pk):
         messages.error(request, "Você não tem permissão para confirmar esta inscrição.")
         return redirect('dashboard_user')
     
-    inscricao.status = 'confirmado'
     inscricao.save()
     messages.success(request, "Inscrição confirmada com sucesso!")
     return redirect('dashboard_user')
+
+@login_required
+def deletar_minha_conta(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        messages.success(request, "Sua conta foi deletada com sucesso.")
+        return redirect('index')
+    return render(request, 'forms/confirmar_delete_conta.html')
+
+@login_required
+@user_passes_test(is_admin)
+def lista_usuarios(request):
+    usuarios = Usuario.objects.select_related('user').all()
+    return render(request, 'gestao/lista_usuarios.html', {'usuarios': usuarios})
+
+@login_required
+@user_passes_test(is_admin)
+def deletar_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    if request.method == 'POST':
+        user = usuario.user
+        user.delete()
+        messages.success(request, f"Usuário {usuario.nome} deletado com sucesso.")
+        return redirect('lista_usuarios')
+    return render(request, 'gestao/evento_confirmar_delete.html', {
+        'evento': usuario, # Reusing template variable name for simplicity
+        'titulo_confirmacao': f"deletar o usuário {usuario.nome}"
+    })

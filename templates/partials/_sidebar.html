@@ -1,6 +1,5 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
-    
     <li class="nav-item nav-category">
       <span class="nav-link">Principal</span>
     </li>
@@ -20,101 +19,104 @@
     </li>
 
     {% if user.is_authenticated %}
-      
-      <li class="nav-item nav-category">
-        <span class="nav-link">Minha Conta</span>
-      </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'dashboard_user' %}">
-          <span class="menu-title">Dashboard</span>
-          <i class="icon-speedometer menu-icon"></i>
-        </a>
-      </li>
+    <li class="nav-item nav-category">
+      <span class="nav-link">Minha Conta</span>
+    </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'editar_perfil' %}">
-          <span class="menu-title">Editar Perfil</span>
-          <i class="icon-user menu-icon"></i>
-        </a>
-      </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard_user' %}">
+        <span class="menu-title">Dashboard</span>
+        <i class="icon-speedometer menu-icon"></i>
+      </a>
+    </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'alterar_senha' %}">
-          <span class="menu-title">Alterar Senha</span>
-          <i class="icon-lock menu-icon"></i>
-        </a>
-      </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'editar_perfil' %}">
+        <span class="menu-title">Editar Perfil</span>
+        <i class="icon-user menu-icon"></i>
+      </a>
+    </li>
 
-      {% if user.usuario.tipo == 'organizador' %}
-        <li class="nav-item nav-category">
-          <span class="nav-link">Gestão de Eventos</span>
-        </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'alterar_senha' %}">
+        <span class="menu-title">Alterar Senha</span>
+        <i class="icon-lock menu-icon"></i>
+      </a>
+    </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'criar_evento' %}">
-            <span class="menu-title">Novo Evento</span>
-            <i class="icon-plus menu-icon"></i>
-          </a>
-        </li>
+    {% if user.usuario.tipo == 'organizador' %}
+    <li class="nav-item nav-category">
+      <span class="nav-link">Gestão de Eventos</span>
+    </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'gerenciar_eventos' %}">
-            <span class="menu-title">Meus Eventos</span>
-            <i class="icon-notebook menu-icon"></i>
-          </a>
-        </li>
-      {% endif %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'criar_evento' %}">
+        <span class="menu-title">Novo Evento</span>
+        <i class="icon-plus menu-icon"></i>
+      </a>
+    </li>
 
-      {% if user.usuario.tipo == 'admin' or user.is_superuser %}
-        <li class="nav-item nav-category">
-          <span class="nav-link">Administração</span>
-        </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'gerenciar_eventos' %}">
+        <span class="menu-title">Meus Eventos</span>
+        <i class="icon-notebook menu-icon"></i>
+      </a>
+    </li>
+    {% endif %} {% if user.usuario.tipo == 'admin' or user.is_superuser %}
+    <li class="nav-item nav-category">
+      <span class="nav-link">Administração</span>
+    </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'relatorio_admin' %}">
-            <span class="menu-title">Relatórios</span>
-            <i class="icon-chart menu-icon"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/admin/" target="_blank">
-            <span class="menu-title">Django Admin</span>
-            <i class="icon-settings menu-icon"></i>
-          </a>
-        </li>
-      {% endif %}
-
-      <li class="nav-item nav-category">
-        <span class="nav-link">Sessão</span>
-      </li>
-      
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'logout' %}">
-          <span class="menu-title">Sair</span>
-          <i class="icon-logout menu-icon"></i>
-        </a>
-      </li>
-
-    {% else %}
-      <li class="nav-item nav-category">
-        <span class="nav-link">Acesso</span>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}">
-          <span class="menu-title">Entrar</span>
-          <i class="icon-login menu-icon"></i>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'cadastro_usuario' %}">
-          <span class="menu-title">Cadastre-se</span>
-          <i class="icon-user-follow menu-icon"></i>
-        </a>
-      </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'relatorio_admin' %}">
+        <span class="menu-title">Relatórios</span>
+        <i class="icon-chart menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'lista_usuarios' %}">
+        <span class="menu-title">Gerenciar Usuários</span>
+        <i class="icon-people menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/admin/" target="_blank">
+        <span class="menu-title">Django Admin</span>
+        <i class="icon-settings menu-icon"></i>
+      </a>
+    </li>
     {% endif %}
 
+    <li class="nav-item nav-category">
+      <span class="nav-link">Sessão</span>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'logout' %}">
+        <span class="menu-title">Sair</span>
+        <i class="icon-logout menu-icon"></i>
+      </a>
+    </li>
+
+    {% else %}
+    <li class="nav-item nav-category">
+      <span class="nav-link">Acesso</span>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'login' %}">
+        <span class="menu-title">Entrar</span>
+        <i class="icon-login menu-icon"></i>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'cadastro_usuario' %}">
+        <span class="menu-title">Cadastre-se</span>
+        <i class="icon-user-follow menu-icon"></i>
+      </a>
+    </li>
+    {% endif %}
   </ul>
 </nav>

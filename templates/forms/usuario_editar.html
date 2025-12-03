@@ -1,33 +1,34 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <div class="container mt-5">
-    <div class="card shadow col-md-6 mx-auto">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Editar Meus Dados</h4>
-        </div>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                
-                {% for field in form %}
-                <div class="mb-3">
-                    <label class="form-label">{{ field.label }}</label>
-                    {{ field }} 
-                    {% if field.errors %}
-                        <div class="text-danger small">{{ field.errors }}</div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-success">Salvar Alterações</button>
-                    <a href="{% url 'alterar_senha' %}" class="btn btn-warning">Alterar Senha</a>
-                    <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
-                </div>
-            </form>
-        </div>
+  <div class="card shadow col-md-6 mx-auto">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Editar Meus Dados</h4>
     </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %} {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }} {% if field.errors %}
+          <div class="text-danger small">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="d-grid gap-2 mt-4">
+          <button type="submit" class="btn btn-success">
+            Salvar Alterações
+          </button>
+          <a href="{% url 'alterar_senha' %}" class="btn btn-warning"
+            >Alterar Senha</a
+          >
+          <a href="{% url 'deletar_minha_conta' %}" class="btn btn-danger"
+            >Deletar Conta</a
+          >
+          <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

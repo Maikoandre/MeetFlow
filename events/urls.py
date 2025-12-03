@@ -38,6 +38,9 @@ urlpatterns = [
     # --- Perfil do Usuário ---
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('perfil/senha/', views.alterar_senha, name='alterar_senha'),
+    path('perfil/deletar/', views.deletar_minha_conta, name='deletar_minha_conta'),
     # --- Admin ---
     path('relatorios/', views.relatorio_admin, name='relatorio_admin'),
+    path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
+    path('usuarios/<int:pk>/deletar/', views.deletar_usuario, name='deletar_usuario'),
 ]

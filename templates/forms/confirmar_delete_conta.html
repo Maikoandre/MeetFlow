@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow border-danger">
+        <div class="card-header bg-danger text-white">
+          <h4 class="mb-0">Confirmar Exclusão de Conta</h4>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning">
+            <i class="mdi mdi-alert-circle"></i>
+            <strong>Atenção!</strong> Esta ação é irreversível. Todos os seus
+            dados, eventos e inscrições serão apagados permanentemente.
+          </div>
+          <p>Tem certeza que deseja excluir sua conta?</p>
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-danger btn-lg">
+                Sim, Excluir Minha Conta
+              </button>
+              <a href="{% url 'editar_perfil' %}" class="btn btn-secondary"
+                >Cancelar</a
+              >
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
