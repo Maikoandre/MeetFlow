@@ -1,93 +1,139 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Detalhes do Relatório</h3>
-        <a href="{% url 'lista_relatorios' relatorio.evento.id %}" class="btn btn-outline-secondary">
-            <i class="mdi mdi-arrow-left"></i> Voltar ao Histórico
-        </a>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Detalhes do Relatório</h3>
+    <a
+      href="{% url 'lista_relatorios' relatorio.evento.id %}"
+      class="btn btn-outline-secondary"
+    >
+      <i class="mdi mdi-arrow-left"></i> Voltar ao Histórico
+    </a>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0 text-white">
+        <i class="mdi mdi-file-document"></i> Dados do Evento: {{
+        relatorio.evento.titulo }}
+      </h4>
     </div>
-
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0 text-white"><i class="mdi mdi-file-document"></i> Dados do Evento: {{ relatorio.evento.titulo }}</h4>
+    <div class="card-body p-5">
+      <div class="row mb-5">
+        <div class="col-md-6">
+          <p class="text-muted mb-1">Gerado em</p>
+          <h5>
+            <i class="mdi mdi-clock-outline text-primary"></i> {{
+            relatorio.data_geracao|date:"d/m/Y \à\s H:i" }}
+          </h5>
         </div>
-        <div class="card-body p-5">
-            
-            <div class="row mb-5">
-                <div class="col-md-6">
-                    <p class="text-muted mb-1">Gerado em</p>
-                    <h5><i class="mdi mdi-clock-outline text-primary"></i> {{ relatorio.data_geracao|date:"d/m/Y \à\s H:i" }}</h5>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="text-muted mb-1">Local do Evento</p>
-                    <h5><i class="mdi mdi-map-marker text-danger"></i> {{ relatorio.evento.local }}</h5>
-                </div>
-            </div>
-
-            <hr class="my-4">
-
-            <div class="row text-center">
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-light border-0 h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column justify-content-center">
-                            <h6 class="text-muted text-uppercase mb-3">Total Inscritos</h6>
-                            <h2 class="text-primary display-4 fw-bold">{{ relatorio.total_inscritos }}</h2>
-                            <i class="mdi mdi-account-multiple opacity-25" style="font-size: 4rem; position: absolute; right: 10px; bottom: 0;"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-light border-0 h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column justify-content-center">
-                            <h6 class="text-muted text-uppercase mb-3">Total Presentes</h6>
-                            <h2 class="text-success display-4 fw-bold">{{ relatorio.total_presentes }}</h2>
-                            <i class="mdi mdi-check-circle opacity-25" style="font-size: 4rem; position: absolute; right: 10px; bottom: 0;"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-light border-0 h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column justify-content-center">
-                            <h6 class="text-muted text-uppercase mb-3">Taxa de Presença</h6>
-                            {% if relatorio.total_inscritos > 0 %}
-                                {% widthratio relatorio.total_presentes relatorio.total_inscritos 100 as percent %}
-                                <h2 class="text-info display-4 fw-bold">{{ percent }}%</h2>
-                            {% else %}
-                                <h2 class="text-muted display-4 fw-bold">0%</h2>
-                            {% endif %}
-                            <i class="mdi mdi-chart-pie opacity-25" style="font-size: 4rem; position: absolute; right: 10px; bottom: 0;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-4">
-                <label class="fw-bold text-secondary mb-2">Visualização de Adesão</label>
-                <div class="progress" style="height: 30px; border-radius: 15px;">
-                    {% if relatorio.total_inscritos > 0 %}
-                        {% widthratio relatorio.total_presentes relatorio.total_inscritos 100 as percent %}
-                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
-                             role="progressbar" 
-                             style="width: {{ percent }}" 
-                             aria-valuenow="{{ percent }}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100">
-                             {{ percent }}% Compareceram
-                        </div>
-                    {% else %}
-                        <div class="progress-bar bg-secondary w-100" role="progressbar">Sem dados</div>
-                    {% endif %}
-                </div>
-                <small class="text-muted mt-2 d-block">
-                    * A barra verde representa a percentagem de inscritos que confirmaram presença.
-                </small>
-            </div>
-
+        <div class="col-md-6 text-md-end">
+          <p class="text-muted mb-1">Local do Evento</p>
+          <h5>
+            <i class="mdi mdi-map-marker text-danger"></i> {{
+            relatorio.evento.local }}
+          </h5>
         </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <div class="card bg-light border-0 h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+              <h6 class="text-muted text-uppercase mb-3">Total Inscritos</h6>
+              <h2 class="text-primary display-4 fw-bold">
+                {{ relatorio.total_inscritos }}
+              </h2>
+              <i
+                class="mdi mdi-account-multiple opacity-25"
+                style="
+                  font-size: 4rem;
+                  position: absolute;
+                  right: 10px;
+                  bottom: 0;
+                "
+              ></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="card bg-light border-0 h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+              <h6 class="text-muted text-uppercase mb-3">Total Presentes</h6>
+              <h2 class="text-success display-4 fw-bold">
+                {{ relatorio.total_presentes }}
+              </h2>
+              <i
+                class="mdi mdi-check-circle opacity-25"
+                style="
+                  font-size: 4rem;
+                  position: absolute;
+                  right: 10px;
+                  bottom: 0;
+                "
+              ></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="card bg-light border-0 h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+              <h6 class="text-muted text-uppercase mb-3">Taxa de Presença</h6>
+              {% if relatorio.total_inscritos > 0 %} {% widthratio
+              relatorio.total_presentes relatorio.total_inscritos 100 as percent
+              %}
+              <h2 class="text-info display-4 fw-bold">{{ percent }}%</h2>
+              {% else %}
+              <h2 class="text-muted display-4 fw-bold">0%</h2>
+              {% endif %}
+              <i
+                class="mdi mdi-chart-pie opacity-25"
+                style="
+                  font-size: 4rem;
+                  position: absolute;
+                  right: 10px;
+                  bottom: 0;
+                "
+              ></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <label class="fw-bold text-secondary mb-2"
+          >Visualização de Adesão</label
+        >
+        <div class="progress" style="height: 30px; border-radius: 15px">
+          {% if relatorio.total_inscritos > 0 %} {# Calcula a percentagem e
+          guarda na variável 'percent' #} {% widthratio
+          relatorio.total_presentes relatorio.total_inscritos 100 as percent %}
+
+          <div
+            class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            style="width: {{ percent }}%;"
+            aria-valuenow="{{ percent }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            {# Exibe o número calculado #} {{ percent }}% Compareceram
+          </div>
+          {% else %}
+          <div class="progress-bar bg-secondary w-100" role="progressbar">
+            Sem dados
+          </div>
+          {% endif %}
+        </div>
+        <small class="text-muted mt-2 d-block">
+          * A barra verde representa a percentagem de inscritos que confirmaram
+          presença.
+        </small>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
