@@ -18,6 +18,12 @@ class Command(BaseCommand):
         def get_random_name():
             return f"{random.choice(first_names)} {random.choice(last_names)}"
 
+        # 0. Create Admin
+        if not User.objects.filter(username='admin').exists():
+            user = User.objects.create_superuser('admin', 'admin@example.com', 'password123')
+            Usuario.objects.create(user=user, nome='Administrador', idade=30, tipo='admin')
+            self.stdout.write('Created admin: admin')
+
         # 1. Create Organizers
         organizers = []
         for i in range(5):
