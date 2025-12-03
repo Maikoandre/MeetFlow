@@ -13,8 +13,7 @@
   <div class="card shadow">
     <div class="card-header bg-primary text-white">
       <h4 class="mb-0 text-white">
-        <i class="mdi mdi-file-document"></i> Dados do Evento: {{
-        relatorio.evento.titulo }}
+        <i class="mdi mdi-file-document"></i> Dados do Evento: {{ relatorio.evento.titulo }}
       </h4>
     </div>
     <div class="card-body p-5">
@@ -23,8 +22,7 @@
           <p class="text-muted mb-1">Gerado em</p>
           <h5>
             <i class="mdi mdi-clock-outline text-primary"></i>
-            {{ relatorio.data_geracao|date:"d/m/Y" }} às {{
-            relatorio.data_geracao|date:"H:i" }}
+            {{ relatorio.data_geracao|date:"d/m/Y" }} às {{ relatorio.data_geracao|date:"H:i" }}
           </h5>
         </div>
         <div class="col-md-6 text-md-end">
@@ -104,21 +102,16 @@
           >Visualização de Adesão</label
         >
         <div class="progress" style="height: 30px; border-radius: 15px">
-          {# Usamos a variável 'adesao' para guardar o valor calculado no model
-          #} {% with adesao=relatorio.get_adesao %}
-
           <div
             class="progress-bar bg-success progress-bar-striped progress-bar-animated"
             role="progressbar"
-            style="width: {{ adesao }}%;"
-            aria-valuenow="{{ adesao }}"
+            style="width: {{ relatorio.get_adesao }}%"
+            aria-valuenow="{{ relatorio.get_adesao }}"
             aria-valuemin="0"
             aria-valuemax="100"
           >
-            {{ adesao }}% Compareceram
+            {{ relatorio.get_adesao }}% Compareceram
           </div>
-
-          {% endwith %}
         </div>
         <small class="text-muted mt-2 d-block">
           * A barra verde representa a percentagem de inscritos que confirmaram
