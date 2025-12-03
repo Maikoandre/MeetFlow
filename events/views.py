@@ -7,6 +7,7 @@ from django.contrib.auth import update_session_auth_hash, authenticate
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.urls import reverse
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
@@ -225,7 +226,11 @@ def deletar_evento(request, pk):
         messages.success(request, 'Evento eliminado com sucesso.')
         return redirect('gerenciar_eventos')
     
-    return render(request, 'gestao/evento_confirmar_delete.html', {'evento': evento})
+    return render(request, 'gestao/evento_confirmar_delete.html', {
+        'objeto': evento,
+        'titulo_confirmacao': f"eliminar o evento {evento.titulo}",
+        'cancel_url': reverse('gerenciar_eventos')
+    })
 
 
 @login_required
@@ -405,8 +410,9 @@ def deletar_inscricao(request, pk):
         return redirect('dashboard_user')
 
     return render(request, 'gestao/evento_confirmar_delete.html', {
-        'evento': inscricao,
-        'titulo_confirmacao': f"cancelar a inscrição de {inscricao.participante.username}"
+        'objeto': inscricao,
+        'titulo_confirmacao': f"cancelar a inscrição de {inscricao.participante.username}",
+        'cancel_url': reverse('ver_inscritos', args=[evento_id]) if is_dono else reverse('dashboard_user')
     })
 
 
@@ -447,8 +453,9 @@ def deletar_presenca(request, pk):
         return redirect('ver_inscritos', pk=evento_id)
     
     return render(request, 'gestao/evento_confirmar_delete.html', {
-        'evento': presenca,
-        'titulo_confirmacao': f"remover a presença de {presenca.inscricao.participante.username}"
+        'objeto': presenca,
+        'titulo_confirmacao': f"remover a presença de {presenca.inscricao.participante.username}",
+        'cancel_url': reverse('ver_inscritos', args=[evento_id])
     })
 
 @login_required
@@ -528,8 +535,9 @@ def deletar_relatorio(request, pk):
         return redirect('lista_relatorios', evento_id=evento_id)
     
     return render(request, 'gestao/evento_confirmar_delete.html', {
-        'evento': relatorio, 
-        'titulo_confirmacao': f"apagar o relatório gerado em {relatorio.data_geracao}"
+        'objeto': relatorio, 
+        'titulo_confirmacao': f"apagar o relatório gerado em {relatorio.data_geracao}",
+        'cancel_url': reverse('lista_relatorios', args=[evento_id])
     })
 
 @login_required
@@ -568,6 +576,7 @@ def deletar_usuario(request, pk):
         messages.success(request, f"Usuário {usuario.nome} deletado com sucesso.")
         return redirect('lista_usuarios')
     return render(request, 'gestao/evento_confirmar_delete.html', {
-        'evento': usuario, # Reusing template variable name for simplicity
-        'titulo_confirmacao': f"deletar o usuário {usuario.nome}"
+        'objeto': usuario, 
+        'titulo_confirmacao': f"deletar o usuário {usuario.nome}",
+        'cancel_url': reverse('lista_usuarios')
     })
