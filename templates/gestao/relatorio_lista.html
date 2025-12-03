@@ -58,27 +58,15 @@
                   >{{ relatorio.total_presentes }}</span
                 >
               </td>
-              <td class="text-center">
-                {% if relatorio.total_inscritos > 0 %} {% widthratio
-                relatorio.total_presentes relatorio.total_inscritos 100 %}% {%
-                else %} 0% {% endif %}
-              </td>
-              <td class="text-end">
-                <a
-                  href="{% url 'detalhes_relatorio' relatorio.pk %}"
-                  class="btn btn-sm btn-info text-white"
-                  title="Ver Detalhes Completo"
-                >
-                  <i class="mdi mdi-eye"></i> Ver
-                </a>
-              </td>
+              <td class="text-center">{{ relatorio.get_adesao }}%</td>
+              
               <td class="text-end">
                 <a
                   href="{% url 'detalhes_relatorio' relatorio.pk %}"
                   class="btn btn-sm btn-info text-white me-1"
                   title="Ver"
                 >
-                  <i class="mdi mdi-eye"></i>
+                  <i class="mdi mdi-eye"></i> Ver
                 </a>
 
                 <a
