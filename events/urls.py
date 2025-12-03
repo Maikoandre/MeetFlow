@@ -42,5 +42,6 @@ urlpatterns = [
     # --- Admin ---
     path('relatorios/', views.relatorio_admin, name='relatorio_admin'),
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
+    path('usuarios/<int:pk>/editar/', views.editar_usuario_admin, name='editar_usuario_admin'),
     path('usuarios/<int:pk>/deletar/', views.deletar_usuario, name='deletar_usuario'),
 ]

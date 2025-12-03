@@ -603,3 +603,22 @@ def deletar_usuario(request, pk):
         'titulo_confirmacao': f"deletar o usuário {usuario.nome}",
         'cancel_url': reverse('lista_usuarios')
     })
+
+@login_required
+@user_passes_test(is_admin)
+def editar_usuario_admin(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Perfil de {usuario.nome} atualizado com sucesso!')
+            return redirect('lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+    
+    return render(request, 'forms/usuario_editar.html', {
+        'form': form,
+        'titulo': f'Editar Usuário: {usuario.nome}'
+    })
