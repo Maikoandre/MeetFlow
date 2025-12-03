@@ -21,6 +21,7 @@ urlpatterns = [
     path('eventos/<int:pk>/inscritos/', views.ver_inscritos, name='ver_inscritos'),
     # --- Inscrição ---
     path('inscricao/<int:inscricao_id>/presenca/', views.marcar_presenca, name='marcar_presenca'),
+    path('inscricao/<int:pk>/confirmar/', views.confirmar_inscricao, name='confirmar_inscricao'),
     path('inscricao/<int:pk>/editar/', views.editar_inscricao, name='editar_inscricao'),
     path('inscricao/<int:pk>/deletar/', views.deletar_inscricao, name='deletar_inscricao'),
     # --- Presença ---

@@ -531,3 +531,15 @@ def deletar_relatorio(request, pk):
         'evento': relatorio, 
         'titulo_confirmacao': f"apagar o relatório gerado em {relatorio.data_geracao}"
     })
+
+@login_required
+def confirmar_inscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    if inscricao.participante != request.user:
+        messages.error(request, "Você não tem permissão para confirmar esta inscrição.")
+        return redirect('dashboard_user')
+    
+    inscricao.status = 'confirmado'
+    inscricao.save()
+    messages.success(request, "Inscrição confirmada com sucesso!")
+    return redirect('dashboard_user')
