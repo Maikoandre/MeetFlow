@@ -81,7 +81,6 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   </div>
 </div>
 
-
 <div class="row">
   <!-- Charts -->
   <div class="col-md-8">
@@ -168,41 +167,63 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   </div>
 </div>
 
-<script>
-    <!-- htmlhint-disable -->
-  // Admin Charts
-  new Chart(document.getElementById('adminEventsChart'), {
-      type: 'bar',
-      data: {
-          labels: {{ chart_eventos_labels|safe }},
-          datasets: [{
-              label: 'Novos Eventos',
-              data: {{ chart_eventos_data|safe }},
-              backgroundColor: 'rgba(54, 162, 235, 0.6)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
-          }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-  });
+{{ chart_eventos_labels|json_script:"admin-events-labels" }} {{
+chart_eventos_data|json_script:"admin-events-data" }} {{
+chart_usuarios_labels|json_script:"admin-users-labels" }} {{
+chart_usuarios_data|json_script:"admin-users-data" }}
 
-  new Chart(document.getElementById('adminUsersChart'), {
-      type: 'doughnut',
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Carregar dados do HTML
+    const eventsLabels = JSON.parse(
+      document.getElementById("admin-events-labels").textContent
+    );
+    const eventsData = JSON.parse(
+      document.getElementById("admin-events-data").textContent
+    );
+    const usersLabels = JSON.parse(
+      document.getElementById("admin-users-labels").textContent
+    );
+    const usersData = JSON.parse(
+      document.getElementById("admin-users-data").textContent
+    );
+
+    // Admin Charts
+    new Chart(document.getElementById("adminEventsChart"), {
+      type: "bar",
       data: {
-          labels: {{ chart_usuarios_labels|safe }},
-          datasets: [{
-              data: {{ chart_usuarios_data|safe }},
-              backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-          }]
+        labels: eventsLabels,
+        datasets: [
+          {
+            label: "Novos Eventos",
+            data: eventsData,
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+        ],
       },
-      options: { responsive: true, maintainAspectRatio: false }
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+
+    new Chart(document.getElementById("adminUsersChart"), {
+      type: "doughnut",
+      data: {
+        labels: usersLabels,
+        datasets: [
+          {
+            data: usersData,
+            backgroundColor: ["#4e73df", "#1cc88a", "#36b9cc"],
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
   });
 </script>
-
 {% elif perfil.tipo == 'organizador' %}
 <!-- ORGANIZER DASHBOARD -->
 <div class="row">
-  
   <div class="col-md-6">
     <div class="card dashboard-card">
       <div class="card-body d-flex align-items-center justify-content-between">
@@ -292,31 +313,55 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   </div>
 </div>
 
-<script>
-  // Organizer Charts
-  new Chart(document.getElementById('orgInscricoesChart'), {
-      type: 'bar',
-      data: {
-          labels: {{ chart_inscricoes_labels|safe }},
-          datasets: [{
-              label: 'Inscritos',
-              data: {{ chart_inscricoes_data|safe }},
-              backgroundColor: '#1cc88a',
-          }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-  });
+{{ chart_inscricoes_labels|json_script:"org-insc-labels" }} {{
+chart_inscricoes_data|json_script:"org-insc-data" }} {{
+chart_status_labels|json_script:"org-status-labels" }} {{
+chart_status_data|json_script:"org-status-data" }}
 
-  new Chart(document.getElementById('orgStatusChart'), {
-      type: 'pie',
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const inscLabels = JSON.parse(
+      document.getElementById("org-insc-labels").textContent
+    );
+    const inscData = JSON.parse(
+      document.getElementById("org-insc-data").textContent
+    );
+    const statusLabels = JSON.parse(
+      document.getElementById("org-status-labels").textContent
+    );
+    const statusData = JSON.parse(
+      document.getElementById("org-status-data").textContent
+    );
+
+    // Organizer Charts
+    new Chart(document.getElementById("orgInscricoesChart"), {
+      type: "bar",
       data: {
-          labels: {{ chart_status_labels|safe }},
-          datasets: [{
-              data: {{ chart_status_data|safe }},
-              backgroundColor: ['#f6c23e', '#1cc88a', '#e74a3b'],
-          }]
+        labels: inscLabels,
+        datasets: [
+          {
+            label: "Inscritos",
+            data: inscData,
+            backgroundColor: "#1cc88a",
+          },
+        ],
       },
-      options: { responsive: true, maintainAspectRatio: false }
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+
+    new Chart(document.getElementById("orgStatusChart"), {
+      type: "pie",
+      data: {
+        labels: statusLabels,
+        datasets: [
+          {
+            data: statusData,
+            backgroundColor: ["#f6c23e", "#1cc88a", "#e74a3b"],
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
   });
 </script>
 
@@ -427,18 +472,32 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   </div>
 </div>
 
+{{ chart_minhas_status_labels|json_script:"part-status-labels" }} {{
+chart_minhas_status_data|json_script:"part-status-data" }}
+
 <script>
-  // Participant Charts
-  new Chart(document.getElementById('participantStatusChart'), {
-      type: 'doughnut',
+  document.addEventListener("DOMContentLoaded", function () {
+    const statusLabels = JSON.parse(
+      document.getElementById("part-status-labels").textContent
+    );
+    const statusData = JSON.parse(
+      document.getElementById("part-status-data").textContent
+    );
+
+    // Participant Charts
+    new Chart(document.getElementById("participantStatusChart"), {
+      type: "doughnut",
       data: {
-          labels: {{ chart_minhas_status_labels|safe }},
-          datasets: [{
-              data: {{ chart_minhas_status_data|safe }},
-              backgroundColor: ['#f6c23e', '#1cc88a', '#e74a3b'],
-          }]
+        labels: statusLabels,
+        datasets: [
+          {
+            data: statusData,
+            backgroundColor: ["#f6c23e", "#1cc88a", "#e74a3b"],
+          },
+        ],
       },
-      options: { responsive: true, maintainAspectRatio: false }
+      options: { responsive: true, maintainAspectRatio: false },
+    });
   });
 </script>
 
