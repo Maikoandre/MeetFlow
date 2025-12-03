@@ -108,25 +108,21 @@
           >Visualização de Adesão</label
         >
         <div class="progress" style="height: 30px; border-radius: 15px">
-          {% if relatorio.total_inscritos > 0 %} {# Calcula a percentagem e
-          guarda na variável 'percent' #} {% widthratio
-          relatorio.total_presentes relatorio.total_inscritos 100 as percent %}
+          {# Usamos a variável 'adesao' para guardar o valor calculado no model
+          #} {% with adesao=relatorio.get_adesao %}
 
           <div
             class="progress-bar bg-success progress-bar-striped progress-bar-animated"
             role="progressbar"
-            style="width: {{ percent }}%;"
-            aria-valuenow="{{ percent }}"
+            style="width: {{ adesao }}%;"
+            aria-valuenow="{{ adesao }}"
             aria-valuemin="0"
             aria-valuemax="100"
           >
-            {# Exibe o número calculado #} {{ percent }}% Compareceram
+            {{ adesao }}% Compareceram
           </div>
-          {% else %}
-          <div class="progress-bar bg-secondary w-100" role="progressbar">
-            Sem dados
-          </div>
-          {% endif %}
+
+          {% endwith %}
         </div>
         <small class="text-muted mt-2 d-block">
           * A barra verde representa a percentagem de inscritos que confirmaram

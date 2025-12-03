@@ -59,3 +59,8 @@ class Relatorio(models.Model):
 
     def __str__(self):
         return f"Relatório - {self.evento.titulo}"
+    
+    def get_adesao(self):
+        if self.total_inscritos == 0:
+            return 0
+        return int((self.total_presentes / self.total_inscritos) * 100)
