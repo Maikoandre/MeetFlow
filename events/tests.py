@@ -28,16 +28,12 @@ class EventoTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_edicao_apenas_pelo_organizador(self):
-        """Teste: O dono deve conseguir acessar a página de edição"""
         
-        # 1. Faz login como o dono (criado no setUp)
         self.client.login(username='testuser', password='password123')
         
-        # 2. Tenta acessar a página (ajuste 'editar_evento' para o nome da sua url)
         url = reverse('editar_evento', args=[self.evento.pk]) 
         response = self.client.get(url)
         
-        # 3. Espera sucesso (200)
         self.assertEqual(response.status_code, 200)
 
     def test_bloqueio_de_outros_usuarios(self):
@@ -47,3 +43,28 @@ class EventoTests(TestCase):
         url = reverse('editar_evento', args=[self.evento.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+    def test_criar_novo_evento_post(self):
+        
+        self.client.login(username='testuser', password='password123')
+        
+        dados_formulario = {
+            'titulo': 'Workshop Django',
+            'descricao': 'Aprendendo testes automatizados',
+            'data': '2025-12-20',
+            'local': 'Online'
+        }
+
+        url = reverse('criar_evento') 
+        response = self.client.post(url, dados_formulario)
+
+        self.assertEqual(response.status_code, 302) 
+
+        self.assertEqual(Evento.objects.count(), 2)
+
+        novo_evento = Evento.objects.last()
+        self.assertEqual(novo_evento.titulo, 'Workshop Django')
+        self.assertEqual(novo_evento.organizador.username, 'testuser')
+
+        if response.status_code == 200:
+            print(response.context['form'].errors)
