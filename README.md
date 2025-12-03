@@ -5,9 +5,11 @@ Este projeto é o Trabalho Final da disciplina de **Programação para Web I** d
 O sistema foi desenvolvido utilizando **Django** e **Bootstrap**, focando na implementação de autenticação, permissões e operações CRUD completas utilizando exclusivamente **Function-Based Views (FBV)**.
 
 ## 🎯 Objetivo
+
 Desenvolver uma aplicação web para o gerenciamento completo do ciclo de vida de eventos, permitindo o cadastro de usuários, criação de eventos, gestão de inscrições, controle de presença e geração de relatórios.
 
 ## 🚀 Funcionalidades (CRUDs)
+
 O sistema conta com 5 funcionalidades completas (Listagem, Criação, Edição, Exclusão e Detalhe):
 
 1.  **Gestão de Eventos:** Criação, aprovação, publicação e gerenciamento de eventos.
@@ -17,27 +19,59 @@ O sistema conta com 5 funcionalidades completas (Listagem, Criação, Edição, 
 5.  **Relatórios:** Geração e visualização de métricas dos eventos (total de inscritos e presentes).
 
 Além disso, o sistema possui:
-* Sistema de Autenticação (Login/Logout/Cadastro).
-* Controle de acesso baseado em permissões e grupos.
+
+- Sistema de Autenticação (Login/Logout/Cadastro).
+- Controle de acesso baseado em permissões e grupos.
 
 ## 🛠️ Tecnologias Utilizadas
-* Python
-* Django
-* SQLite
-* Bootstrap
-* HTML/CSS/JavaScript
+
+- Python
+- Django
+- MySQL
+- Docker & Docker Compose
+- Bootstrap
+- HTML/CSS/JavaScript
 
 ## ⚙️ Instruções de Execução
 
-Siga os passos abaixo para executar o projeto localmente:
+### 🐳 Execução com Docker (Recomendado)
+
+A maneira mais fácil de rodar o projeto é utilizando Docker. Certifique-se de ter o **Docker** e o **Docker Compose** instalados.
 
 1.  **Clone o repositório:**
+
+    ```bash
+    git clone https://github.com/Maikoandre/MeetFlow.git
+    cd MeetFlow
+    ```
+
+2.  **Suba os containers:**
+
+    ```bash
+    docker compose up --build
+    ```
+
+    _Isso irá construir a imagem, iniciar o banco de dados MySQL e o servidor Django._
+
+3.  **Acesse no navegador:**
+    - Sistema: `http://localhost:8000/`
+    - Admin: `http://localhost:8000/admin/`
+
+---
+
+### 🔧 Execução Manual
+
+Caso prefira rodar sem Docker, você precisará de uma instância **MySQL** rodando localmente.
+
+1.  **Clone o repositório:**
+
     ```bash
     git clone https://github.com/Maikoandre/MeetFlow.git
     cd MeetFlow
     ```
 
 2.  **Crie e ative um ambiente virtual:**
+
     ```bash
     # Windows
     python -m venv venv
@@ -49,39 +83,51 @@ Siga os passos abaixo para executar o projeto localmente:
     ```
 
 3.  **Instale as dependências:**
+
     ```bash
-    pip install django
-    # Se houver um requirements.txt: pip install -r requirements.txt
+    pip install -r requirements.txt
     ```
 
-4.  **Realize as migrações do banco de dados:**
+4.  **Configure o Banco de Dados:**
+    Certifique-se de ter um banco MySQL criado e exporte as variáveis de ambiente ou ajuste o `settings.py` se necessário.
+    Exemplo de variáveis (Linux/Mac):
+
+    ```bash
+    export DB_NAME=meetflow_db
+    export DB_USER=seu_usuario
+    export DB_PASSWORD=sua_senha
+    export DB_HOST=localhost
+    ```
+
+5.  **Realize as migrações:**
+
     ```bash
     python manage.py makemigrations
     python manage.py migrate
     ```
 
-5.  **Crie um superusuário (Admin):**
+6.  **Crie um superusuário (Admin):**
+
     ```bash
     python manage.py createsuperuser
     ```
 
-6.  **Inicie o servidor:**
+7.  **Inicie o servidor:**
     ```bash
     python manage.py runserver
     ```
 
-7.  **Acesse no navegador:**
-    * Sistema: `http://127.0.0.1:8000/`
-    * Admin: `http://127.0.0.1:8000/admin/`
-
 ## 👥 Integrantes do Grupo
-* Maiko André Antunes de Sousa - 20241GBI02GT0010
-* Adalvan Lima dos Anjos - 20241GBI02GT0005
+
+- Maiko André Antunes de Sousa - 20241GBI02GT0010
+- Adalvan Lima dos Anjos - 20241GBI02GT0005
 
 ## 📺 Vídeo de Apresentação
+
 Confira a demonstração do funcionamento do sistema no link abaixo:
 
 **[INSIRA AQUI O LINK DO VÍDEO NO YOUTUBE]**
 
 ---
-*Projeto desenvolvido para fins acadêmicos.*
+
+_Projeto desenvolvido para fins acadêmicos._
