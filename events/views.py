@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.db.models import Count
+from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import EventoForm, InscricaoEventoForm, UsuarioForm, PresencaForm, RelatorioForm
 from .models import Evento, Inscricao, Usuario, Presenca, Relatorio
@@ -41,6 +42,10 @@ def dashboard(request):
     }
 
     if usuario.tipo == 'admin':
+        # Dados para gráficos Admin
+        eventos_por_mes = Evento.objects.annotate(month=TruncMonth('data')).values('month').annotate(total=Count('id')).order_by('month')
+        usuarios_por_tipo = Usuario.objects.values('tipo').annotate(total=Count('id'))
+        
         context.update({
             'total_eventos': Evento.objects.count(),
             'total_usuarios': Usuario.objects.count(),
@@ -48,6 +53,11 @@ def dashboard(request):
             'lista_pendentes': Evento.objects.filter(aprovado=False).select_related('organizador'),
             'lista_a_publicar': Evento.objects.filter(aprovado=True, publicado=False).select_related('organizador'),
             'lista_publicados': Evento.objects.filter(publicado=True).select_related('organizador'),
+            # Chart Data
+            'chart_eventos_labels': [e['month'].strftime('%b/%Y') for e in eventos_por_mes],
+            'chart_eventos_data': [e['total'] for e in eventos_por_mes],
+            'chart_usuarios_labels': [u['tipo'].capitalize() for u in usuarios_por_tipo],
+            'chart_usuarios_data': [u['total'] for u in usuarios_por_tipo],
         })
         for ev in context['lista_pendentes']:
             try:
@@ -57,18 +67,31 @@ def dashboard(request):
 
     elif usuario.tipo == 'organizador':
         meus_eventos = Evento.objects.filter(organizador=request.user)
+        inscricoes_por_evento = meus_eventos.annotate(total=Count('inscricoes')).values('titulo', 'total')
+        status_inscricoes = Inscricao.objects.filter(evento__organizador=request.user).values('status').annotate(total=Count('id'))
+
         context.update({
             'meus_eventos': meus_eventos,
             'meus_eventos_count': meus_eventos.count(),
             'total_inscritos': Inscricao.objects.filter(evento__organizador=request.user).count(),
+            # Chart Data
+            'chart_inscricoes_labels': [e['titulo'] for e in inscricoes_por_evento],
+            'chart_inscricoes_data': [e['total'] for e in inscricoes_por_evento],
+            'chart_status_labels': [s['status'].capitalize() for s in status_inscricoes],
+            'chart_status_data': [s['total'] for s in status_inscricoes],
         })
 
     else:
         inscricoes = Inscricao.objects.filter(participante=request.user).select_related('evento')
+        status_minhas_inscricoes = inscricoes.values('status').annotate(total=Count('id'))
+
         context.update({
             'minhas_inscricoes': inscricoes,
             'total_inscricoes': inscricoes.count(),
             'eventos_confirmados': inscricoes.filter(status='confirmado').count(),
+            # Chart Data
+            'chart_minhas_status_labels': [s['status'].capitalize() for s in status_minhas_inscricoes],
+            'chart_minhas_status_data': [s['total'] for s in status_minhas_inscricoes],
         })
 
     return render(request, 'dashboard_users.html', context)
