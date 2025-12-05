@@ -4,35 +4,87 @@
 {% block title %}Dashboard - MeetFlow{% endblock %}
 
 {% block content %}
+
+<style>
+    .public-card {
+        min-height: 200px; /* Aumentei um pouco a altura mínima */
+        border-radius: 0.8rem;
+        color: #fff;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centraliza o conteúdo verticalmente */
+    }
+    
+    /* Classe extra para aumentar textos gerais dentro dos cards */
+    .card-text-big {
+        font-size: 1.2rem;
+        line-height: 1.6;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-12 grid-margin">
         <div class="card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class=" align-items-baseline report-summary-header">
-                            <h5 class="font-weight-semibold">Resumo do Painel</h5> 
-                            <p class="ml-auto">Atualizado hoje</p> 
-                            <button class="btn btn-icons border-0 p-2"><i class="icon-refresh"></i></button>
+                        <div class="d-flex align-items-center justify-content-between report-summary-header mb-3">
+                            <h3 class="font-weight-bold">Resumo do Painel</h3> 
+                            <div class="d-flex align-items-center">
+                                <span class="me-2" style="font-size: 1.1rem;">Atualizado hoje</span> 
+                                <button class="btn btn-icons border-0 p-2"><i class="icon-refresh" style="font-size: 1.2rem;"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="row report-inner-cards-wrapper">
-                    <div class="col-md-4 col-xl report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">Total de Eventos</span>
-                            <h4>{{ total_eventos }}</h4>
+                    <div class="col-md-6 col-xl report-inner-card" data-aos="fade-up">
+                        <div class="card public-card bg-primary shadow text-center">
+                            <span class="report-title font-weight-bold" style="font-size: 1.4rem;">Total de Eventos</span>
+                            <h2 class="mt-3 font-weight-bold" style="font-size: 3.5rem;">{{ total_eventos }}</h2>
                         </div>
                     </div>
-                    <div class="col-md-4 col-xl report-inner-card">
-                        <div class="inner-card-text">
-                            <span class="report-title">Participantes</span>
-                            <h4>{{ total_participantes}}</h4>
+
+                    <div class="col-md-6 col-xl report-inner-card" data-aos="fade-up" data-aos-delay="150">
+                        <div class="card public-card bg-success shadow text-center">
+                            <span class="report-title font-weight-bold" style="font-size: 1.4rem;">Participantes</span>
+                            <h2 class="mt-3 font-weight-bold" style="font-size: 3.5rem;">{{ total_participantes }}</h2>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
+<div class="row mt-4 g-3">
+    <div class="col-md-4" data-aos="zoom-in">
+        <div class="card public-card bg-info shadow text-center">
+            <h4 class="fw-bold mb-3" style="font-size: 1.5rem;">O que são eventos?</h4>
+            <p class="card-text-big">Encontros planejados para fortalecer comunicação e integração.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="150">
+        <div class="card public-card bg-warning shadow text-center text-dark">
+            <h4 class="fw-bold mb-3" style="font-size: 1.5rem;">Por que participar?</h4>
+            <p class="card-text-big">Cria networking, troca de ideias e melhora a colaboração.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+        <div class="card public-card bg-danger shadow text-center">
+            <h4 class="fw-bold text-white mb-3" style="font-size: 1.5rem;">Benefícios</h4>
+            <p class="card-text-big">Organização centralizada e fácil acompanhamento das atividades.</p>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init();</script>
+
 {% endblock %}

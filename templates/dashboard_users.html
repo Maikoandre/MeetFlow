@@ -1,5 +1,7 @@
-{% extends 'base.html' %} {% block title %}Dashboard - {{
-perfil.get_tipo_display }}{% endblock %} {% block content %}
+{% extends 'base.html' %} 
+{% block title %}Dashboard - {{ perfil.get_tipo_display }}{% endblock %} 
+
+{% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -9,56 +11,71 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s;
     margin-bottom: 24px;
+    padding: 10px; /* Mais preenchimento */
   }
   .dashboard-card:hover {
     transform: translateY(-5px);
   }
+  /* AUMENTADO: Ícones gigantes */
   .card-icon {
-    font-size: 2.5rem;
+    font-size: 4.5rem; 
     opacity: 0.8;
   }
+  /* AUMENTADO: Números de estatísticas */
   .stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    line-height: 1.2;
   }
+  /* AUMENTADO: Texto abaixo do número */
   .stat-label {
     color: #6c757d;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
   .chart-container {
     position: relative;
-    height: 300px;
+    height: 350px; /* Um pouco mais alto para acompanhar o texto */
     width: 100%;
+  }
+  /* NOVA CLASSE: Para aumentar tabelas */
+  .table-big td, .table-big th {
+    font-size: 1.15rem;
+    vertical-align: middle;
+    padding: 15px;
+  }
+  /* NOVA CLASSE: Títulos de seção */
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
   }
 </style>
 
-<div class="row mb-4">
+<div class="row mb-5">
   <div class="col-12">
     <div class="d-flex align-items-center justify-content-between">
       <div>
-        <h3 class="mb-1 font-weight-bold">Olá, {{ perfil.nome }}!</h3>
-        <p class="text-muted mb-0">
+        <h2 class="mb-2 font-weight-bold" style="font-size: 2.8rem;">Olá, {{ perfil.nome }}!</h2>
+        <p class="text-muted mb-0" style="font-size: 1.3rem;">
           Bem-vindo ao seu painel de {{ perfil.get_tipo_display }}
         </p>
       </div>
       <div class="d-none d-md-block">
-        <span class="badge badge-pill badge-primary px-3 py-2"
-          >{{ perfil.get_tipo_display }}</span
-        >
+        <span class="badge badge-pill badge-primary px-4 py-3" style="font-size: 1.1rem;">
+          {{ perfil.get_tipo_display }}
+        </span>
       </div>
     </div>
   </div>
 </div>
 
 {% if perfil.tipo == 'admin' %}
-<!-- ADMIN DASHBOARD -->
 <div class="row">
-  <!-- Stats Cards -->
-  <div class="col-md-4">
-    <div class="card dashboard-card">
+  <div class="col-md-6"> <div class="card dashboard-card">
       <div class="card-body d-flex align-items-center justify-content-between">
         <div>
           <h2 class="stat-value text-primary">{{ total_usuarios }}</h2>
@@ -68,7 +85,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
       </div>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6">
     <div class="card dashboard-card">
       <div class="card-body d-flex align-items-center justify-content-between">
         <div>
@@ -82,11 +99,10 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
 </div>
 
 <div class="row">
-  <!-- Charts -->
   <div class="col-md-8">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title">Eventos por Mês</h5>
+        <h3 class="card-title section-title">Eventos por Mês</h3>
         <div class="chart-container">
           <canvas id="adminEventsChart"></canvas>
         </div>
@@ -96,7 +112,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-md-4">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title">Distribuição de Usuários</h5>
+        <h3 class="card-title section-title">Distribuição</h3>
         <div class="chart-container">
           <canvas id="adminUsersChart"></canvas>
         </div>
@@ -109,9 +125,9 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-12">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title mb-4">Gerenciar Aprovações</h5>
+        <h3 class="card-title section-title">Gerenciar Aprovações</h3>
         <div class="table-responsive">
-          <table class="table table-hover">
+          <table class="table table-hover table-big">
             <thead class="thead-light">
               <tr>
                 <th>Evento</th>
@@ -127,12 +143,9 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
                 <td><strong>{{ evento.titulo }}</strong></td>
                 <td>{{ evento.organizador_nome }}</td>
                 <td>{{ evento.data|date:"d/m/Y" }}</td>
-                <td><span class="badge badge-warning">Pendente</span></td>
+                <td><span class="badge badge-warning" style="font-size: 0.9rem;">Pendente</span></td>
                 <td>
-                  <a
-                    href="{% url 'aprovar_evento' evento.pk %}"
-                    class="btn btn-success btn-sm btn-rounded"
-                  >
+                  <a href="{% url 'aprovar_evento' evento.pk %}" class="btn btn-success btn-rounded font-weight-bold">
                     <i class="mdi mdi-check"></i> Aprovar
                   </a>
                 </td>
@@ -143,17 +156,16 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
                   Nenhum evento pendente.
                 </td>
               </tr>
-              {% endfor %} {% for evento in lista_a_publicar %}
+              {% endfor %} 
+              
+              {% for evento in lista_a_publicar %}
               <tr>
                 <td><strong>{{ evento.titulo }}</strong></td>
                 <td>{{ evento.organizador_nome }}</td>
                 <td>{{ evento.data|date:"d/m/Y" }}</td>
-                <td><span class="badge badge-info">Aprovado</span></td>
+                <td><span class="badge badge-info" style="font-size: 0.9rem;">Aprovado</span></td>
                 <td>
-                  <a
-                    href="{% url 'publicar_evento' evento.pk %}"
-                    class="btn btn-primary btn-sm btn-rounded"
-                  >
+                  <a href="{% url 'publicar_evento' evento.pk %}" class="btn btn-primary btn-rounded font-weight-bold">
                     <i class="mdi mdi-publish"></i> Publicar
                   </a>
                 </td>
@@ -168,7 +180,6 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
 </div>
 
 <script>
-    <!-- htmlhint-disable -->
   // Admin Charts
   new Chart(document.getElementById('adminEventsChart'), {
       type: 'bar',
@@ -199,14 +210,12 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
 </script>
 
 {% elif perfil.tipo == 'organizador' %}
-<!-- ORGANIZER DASHBOARD -->
 <div class="row">
-  <div class="col-md-6">
-    <div class="card dashboard-card">
+  <div class="col-md-12"> <div class="card dashboard-card">
       <div class="card-body d-flex align-items-center justify-content-between">
         <div>
           <h2 class="stat-value text-success">{{ total_inscritos }}</h2>
-          <p class="stat-label">Total de Inscritos</p>
+          <p class="stat-label">Total de Inscritos (Todos Eventos)</p>
         </div>
         <i class="mdi mdi-account-multiple-check card-icon text-success"></i>
       </div>
@@ -218,7 +227,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-md-8">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title">Inscritos por Evento</h5>
+        <h3 class="card-title section-title">Inscritos por Evento</h3>
         <div class="chart-container">
           <canvas id="orgInscricoesChart"></canvas>
         </div>
@@ -228,7 +237,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-md-4">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title">Status das Inscrições</h5>
+        <h3 class="card-title section-title">Status Inscrições</h3>
         <div class="chart-container">
           <canvas id="orgStatusChart"></canvas>
         </div>
@@ -242,15 +251,11 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
     <div class="card dashboard-card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h5 class="card-title mb-0">Meus Eventos Recentes</h5>
-          <a
-            href="{% url 'gerenciar_eventos' %}"
-            class="btn btn-outline-primary btn-sm"
-            >Ver Todos</a
-          >
+          <h3 class="card-title section-title mb-0">Meus Eventos Recentes</h3>
+          <a href="{% url 'gerenciar_eventos' %}" class="btn btn-outline-primary btn-lg">Ver Todos</a>
         </div>
         <div class="table-responsive">
-          <table class="table table-hover">
+          <table class="table table-hover table-big">
             <thead>
               <tr>
                 <th>Evento</th>
@@ -262,18 +267,18 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
             <tbody>
               {% for evento in meus_eventos|slice:":5" %}
               <tr>
-                <td>{{ evento.titulo }}</td>
+                <td><strong>{{ evento.titulo }}</strong></td>
                 <td>{{ evento.data|date:"d/m/Y" }}</td>
                 <td>
                   {% if evento.publicado %}
-                  <span class="badge badge-success">Publicado</span>
+                  <span class="badge badge-success" style="font-size: 0.9rem;">Publicado</span>
                   {% elif evento.aprovado %}
-                  <span class="badge badge-info">Aprovado</span>
+                  <span class="badge badge-info" style="font-size: 0.9rem;">Aprovado</span>
                   {% else %}
-                  <span class="badge badge-warning">Em Análise</span>
+                  <span class="badge badge-warning" style="font-size: 0.9rem;">Em Análise</span>
                   {% endif %}
                 </td>
-                <td>{{ evento.inscricoes.count }}</td>
+                <td style="font-size: 1.3rem; font-weight: bold;">{{ evento.inscricoes.count }}</td>
               </tr>
               {% empty %}
               <tr>
@@ -319,7 +324,6 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
 </script>
 
 {% else %}
-<!-- PARTICIPANT DASHBOARD -->
 <div class="row">
   <div class="col-md-6">
     <div class="card dashboard-card">
@@ -337,7 +341,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
       <div class="card-body d-flex align-items-center justify-content-between">
         <div>
           <h2 class="stat-value text-white">{{ eventos_confirmados }}</h2>
-          <p class="mb-0 text-white-50">Eventos Confirmados</p>
+          <p class="mb-0 text-white-50 stat-label" style="color: rgba(255,255,255,0.8) !important;">Confirmados</p>
         </div>
         <i class="mdi mdi-check-decagram card-icon text-white"></i>
       </div>
@@ -349,7 +353,7 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-md-4">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title">Minha Situação</h5>
+        <h3 class="card-title section-title">Minha Situação</h3>
         <div class="chart-container">
           <canvas id="participantStatusChart"></canvas>
         </div>
@@ -359,9 +363,9 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   <div class="col-md-8">
     <div class="card dashboard-card">
       <div class="card-body">
-        <h5 class="card-title mb-4">Próximos Eventos</h5>
+        <h3 class="card-title section-title">Próximos Eventos</h3>
         <div class="table-responsive">
-          <table class="table table-hover">
+          <table class="table table-hover table-big">
             <thead>
               <tr>
                 <th>Evento</th>
@@ -379,41 +383,31 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
                 <td>{{ inscricao.evento.local }}</td>
                 <td>
                   {% if inscricao.status == 'confirmado' %}
-                  <span class="badge badge-success">Confirmado</span>
+                  <span class="badge badge-success" style="font-size: 0.9rem;">Confirmado</span>
                   {% elif inscricao.status == 'pendente' %}
-                  <span class="badge badge-warning">Pendente</span>
+                  <span class="badge badge-warning" style="font-size: 0.9rem;">Pendente</span>
                   {% else %}
-                  <span class="badge badge-danger">Cancelado</span>
+                  <span class="badge badge-danger" style="font-size: 0.9rem;">Cancelado</span>
                   {% endif %}
                 </td>
                 <td>
                   {% if inscricao.status != 'confirmado' %}
-                  <a
-                    href="{% url 'confirmar_inscricao' inscricao.id %}"
-                    class="btn btn-success btn-sm btn-icon-text"
-                    title="Confirmar"
-                  >
-                    <i class="mdi mdi-check"></i>
+                  <a href="{% url 'confirmar_inscricao' inscricao.id %}" class="btn btn-success btn-sm btn-icon-text p-2" title="Confirmar">
+                    <i class="mdi mdi-check" style="font-size: 1.2rem;"></i>
                   </a>
                   {% endif %}
-                  <a
-                    href="{% url 'deletar_inscricao' inscricao.id %}"
-                    class="btn btn-danger btn-sm btn-icon-text"
-                    title="Cancelar"
-                  >
-                    <i class="mdi mdi-delete"></i>
+                  <a href="{% url 'deletar_inscricao' inscricao.id %}" class="btn btn-danger btn-sm btn-icon-text p-2" title="Cancelar">
+                    <i class="mdi mdi-delete" style="font-size: 1.2rem;"></i>
                   </a>
                 </td>
               </tr>
               {% empty %}
               <tr>
                 <td colspan="5" class="text-center py-4">
-                  <p class="text-muted mb-2">
+                  <p class="text-muted mb-3" style="font-size: 1.2rem;">
                     Você não está inscrito em nenhum evento.
                   </p>
-                  <a href="{% url 'eventos' %}" class="btn btn-primary btn-sm"
-                    >Ver Eventos Disponíveis</a
-                  >
+                  <a href="{% url 'eventos' %}" class="btn btn-primary btn-lg">Ver Eventos Disponíveis</a>
                 </td>
               </tr>
               {% endfor %}
@@ -426,7 +420,6 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
 </div>
 
 <script>
-  // Participant Charts
   new Chart(document.getElementById('participantStatusChart'), {
       type: 'doughnut',
       data: {
@@ -440,4 +433,5 @@ perfil.get_tipo_display }}{% endblock %} {% block content %}
   });
 </script>
 
-{% endif %} {% endblock %}
+{% endif %} 
+{% endblock %}

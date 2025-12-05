@@ -4,10 +4,10 @@
   
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
     <a class="navbar-brand brand-logo" href="/">
-      <h3 class="font-weight-bold mb-0 text-primary">MeetFlow</h3>
+      <h2 class="font-weight-bold mb-0 text-primary">MeetFlow</h2>
     </a>
     <a class="navbar-brand brand-logo-mini" href="/">
-      <span class="text-primary font-weight-bold" style="font-size: 30px;">M</span>
+      <span class="text-primary font-weight-bold" style="font-size: 40px;">M</span>
     </a>
     
     <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -17,35 +17,35 @@
 
   <div class="navbar-menu-wrapper d-flex align-items-center">
     
-    <h5 class="mb-0 font-weight-medium d-none d-lg-flex">Gerencie seus eventos com facilidade</h5>
+    <h4 class="mb-0 font-weight-medium d-none d-lg-flex">Gerencie seus eventos com facilidade</h4>
     
     <ul class="navbar-nav navbar-nav-right">
       
       {% if user.is_authenticated %}
         <li class="nav-item dropdown d-none d-xl-inline-flex user-dropdown">
           <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-            <img class="img-xs rounded-circle ms-2" src="{% static 'src/assets/images/faces/face8.jpg' %}" alt="Profile image"> 
-            <span class="font-weight-normal"> Olá, {{ user.first_name|default:user.username }} </span>
+            <img class="img-xs rounded-circle ms-2" src="{% static 'src/assets/images/faces/face8.jpg' %}" alt="Profile image" style="width: 40px; height: 40px;"> 
+            <span class="font-weight-normal" style="font-size: 1.1rem;"> Olá, {{ user.first_name|default:user.username }} </span>
           </a>
           
           <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
             <div class="dropdown-header text-center">
-              <p class="mb-1 mt-3 font-weight-semibold">{{ user.username }}</p>
+              <p class="mb-1 mt-3 font-weight-semibold" style="font-size: 1.1rem;">{{ user.username }}</p>
               <p class="font-weight-light text-muted mb-0">{{ user.email }}</p>
             </div>
             
             <a class="dropdown-item" href="#">
-                <i class="dropdown-item-icon icon-user text-primary"></i> Meu Perfil
+                <i class="dropdown-item-icon icon-user text-primary"></i> <span style="font-size: 1rem;">Meu Perfil</span>
             </a>
             
             <a class="dropdown-item" href="{% url 'logout' %}">
-                <i class="dropdown-item-icon icon-power text-primary"></i> Sair
+                <i class="dropdown-item-icon icon-power text-primary"></i> <span style="font-size: 1rem;">Sair</span>
             </a>
           </div>
         </li>
       {% else %}
         <li class="nav-item">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-sm ml-3">Entrar</a>
+            <a href="{% url 'login' %}" class="btn btn-primary ml-3" style="font-size: 1rem;">Entrar</a>
         </li>
       {% endif %}
 
