@@ -24,9 +24,11 @@ urlpatterns = [
     path('inscricao/<int:pk>/confirmar/', views.confirmar_inscricao, name='confirmar_inscricao'),
     path('inscricao/<int:pk>/editar/', views.editar_inscricao, name='editar_inscricao'),
     path('inscricao/<int:pk>/deletar/', views.deletar_inscricao, name='deletar_inscricao'),
+    path('inscricao/<int:pk>/', views.detalhes_inscricao, name='detalhes_inscricao'),
     # --- Presença ---
     path('presenca/<int:pk>/editar/', views.editar_presenca, name='editar_presenca'),
     path('presenca/<int:pk>/deletar/', views.deletar_presenca, name='deletar_presenca'),
+    path('presenca/<int:pk>/', views.detalhes_presenca, name='detalhes_presenca'),
     # --- Relatório ---
     path('eventos/<int:pk>/relatorio/gerar/', views.gerar_relatorio, name='gerar_relatorio'),
     # --- Gestão de Relatórios do Evento ---
@@ -44,4 +46,5 @@ urlpatterns = [
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/<int:pk>/editar/', views.editar_usuario_admin, name='editar_usuario_admin'),
     path('usuarios/<int:pk>/deletar/', views.deletar_usuario, name='deletar_usuario'),
+    path('usuarios/<int:pk>/', views.detalhes_usuario, name='detalhes_usuario'),
 ]

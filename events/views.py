@@ -322,13 +322,14 @@ def ver_inscritos(request, pk):
     lista_inscritos = []
     for inscricao in inscricoes_query:
         try:
-            presente = inscricao.presenca.presente
+            presenca_obj = inscricao.presenca
         except Presenca.DoesNotExist:
-            presente = False
+            presenca_obj = None
             
         lista_inscritos.append({
             'inscricao': inscricao,
-            'presente': presente
+            'presenca': presenca_obj,
+            'presente': presenca_obj.presente if presenca_obj else False
         })
     return render(request, 'gestao/ver_inscritos.html', {
         'evento': evento, 
@@ -625,3 +626,46 @@ def editar_usuario_admin(request, pk):
         'form': form,
         'titulo': f'Editar Usuário: {usuario.nome}'
     })
+
+
+@login_required
+def detalhes_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    
+    # Permissão: Admin ou o próprio usuário
+    if not (request.user.is_superuser or (hasattr(request.user, 'usuario') and request.user.usuario.tipo == 'admin') or request.user == usuario.user):
+        messages.error(request, "Permissão negada.")
+        return redirect('index')
+
+    return render(request, 'gestao/detalhes_usuario.html', {'usuario': usuario})
+
+
+@login_required
+def detalhes_inscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    
+    # Permissão: Admin, Organizador do evento ou o próprio participante
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'usuario') and request.user.usuario.tipo == 'admin')
+    is_organizador = inscricao.evento.organizador == request.user
+    is_participante = inscricao.participante == request.user
+    
+    if not (is_admin or is_organizador or is_participante):
+        messages.error(request, "Permissão negada.")
+        return redirect('index')
+
+    return render(request, 'gestao/detalhes_inscricao.html', {'inscricao': inscricao})
+
+
+@login_required
+def detalhes_presenca(request, pk):
+    presenca = get_object_or_404(Presenca, pk=pk)
+    
+    # Permissão: Admin ou Organizador do evento
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'usuario') and request.user.usuario.tipo == 'admin')
+    is_organizador = presenca.inscricao.evento.organizador == request.user
+    
+    if not (is_admin or is_organizador):
+        messages.error(request, "Permissão negada.")
+        return redirect('index')
+
+    return render(request, 'gestao/detalhes_presenca.html', {'presenca': presenca})

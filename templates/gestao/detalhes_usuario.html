@@ -1,0 +1,64 @@
+{% extends 'base.html' %} 
+{% block title %}Detalhes do Usuário - MeetFlow
+{% endblock %} 
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow">
+      <div
+        class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+      >
+        <h4 class="mb-0">Detalhes do Usuário</h4>
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-light btn-sm"
+          >Voltar</a
+        >
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-4 font-weight-bold">Nome:</div>
+          <div class="col-md-8">{{ usuario.nome }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4 font-weight-bold">Username:</div>
+          <div class="col-md-8">{{ usuario.user.username }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4 font-weight-bold">Email:</div>
+          <div class="col-md-8">{{ usuario.user.email }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4 font-weight-bold">Idade:</div>
+          <div class="col-md-8">{{ usuario.idade }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4 font-weight-bold">Tipo:</div>
+          <div class="col-md-8">
+            <span
+              class="badge {% if usuario.tipo == 'admin' %}badge-danger{% elif usuario.tipo == 'organizador' %}badge-info{% else %}badge-success{% endif %}"
+            >
+              {{ usuario.get_tipo_display }}
+            </span>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="d-flex justify-content-end">
+          <a
+            href="{% url 'editar_usuario_admin' usuario.pk %}"
+            class="btn btn-warning mr-2"
+          >
+            <i class="icon-pencil"></i> Editar
+          </a>
+          <a
+            href="{% url 'deletar_usuario' usuario.pk %}"
+            class="btn btn-danger"
+          >
+            <i class="icon-trash"></i> Excluir
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

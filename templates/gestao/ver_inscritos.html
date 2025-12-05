@@ -1,16 +1,11 @@
-{% extends 'base.html' %} 
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-5">
-  
-  {% if messages %} 
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %} 
-  {% endif %}
+  {% if messages %} {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %} {% endif %}
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>Gestão de Presença: {{ evento.titulo }}</h3>
@@ -27,56 +22,62 @@
         <div class="col-md-5 text-end">Ações</div>
       </div>
     </div>
-    
+
     <ul class="list-group list-group-flush">
       {% for item in lista_inscritos %}
       <li class="list-group-item">
         <div class="row align-items-center">
-          
           <div class="col-md-4">
             <h5 class="mb-0">{{ item.inscricao.participante.username }}</h5>
-            <small class="text-muted">{{ item.inscricao.participante.email }}</small>
+            <small class="text-muted"
+              >{{ item.inscricao.participante.email }}</small
+            >
           </div>
 
           <div class="col-md-3">
             {% if item.presente %}
-              <span class="badge bg-success" style="font-size: 0.9rem;">
-                <i class="mdi mdi-check-all"></i> Presença Confirmada
-              </span>
+            <span class="badge bg-success" style="font-size: 0.9rem">
+              <i class="mdi mdi-check-all"></i> Presença Confirmada
+            </span>
+            {% else %} {% if item.inscricao.status == 'pendente' %}
+            <span class="badge bg-warning text-dark">Pendente</span>
+            {% elif item.inscricao.status == 'confirmado' %}
+            <span class="badge bg-primary">Inscrito (Aguardando)</span>
             {% else %}
-              {% if item.inscricao.status == 'pendente' %}
-                <span class="badge bg-warning text-dark">Pendente</span>
-              {% elif item.inscricao.status == 'confirmado' %}
-                <span class="badge bg-primary">Inscrito (Aguardando)</span>
-              {% else %}
-                <span class="badge bg-secondary">{{ item.inscricao.get_status_display }}</span>
-              {% endif %}
-            {% endif %}
+            <span class="badge bg-secondary"
+              >{{ item.inscricao.get_status_display }}</span
+            >
+            {% endif %} {% endif %}
           </div>
 
           <div class="col-md-5 text-end">
-            
             {% if item.presente %}
-              <span class="btn btn-success btn-sm disabled" style="opacity: 1; cursor: default;">
-                <i class="mdi mdi-account-check"></i> Presente
-              </span>
-              
-              <a
-                href="{% url 'marcar_presenca' item.inscricao.id %}"
-                class="btn btn-outline-danger btn-sm ms-1"
-                title="Remover Presença / Marcar como Ausente"
-              >
-                <i class="mdi mdi-close"></i>
-              </a>
+            <span class="badge bg-success" style="font-size: 0.9rem">
+              <i class="mdi mdi-account-check"></i> Presente
+            </span>
+            <a
+              href="{% url 'detalhes_presenca' item.presenca.pk %}"
+              class="btn btn-sm btn-link text-dark p-0 ms-1"
+              title="Ver Detalhes Presença"
+              ><i class="mdi mdi-eye"></i
+            ></a>
+
+            <a
+              href="{% url 'marcar_presenca' item.inscricao.id %}"
+              class="btn btn-outline-danger btn-sm ms-1"
+              title="Remover Presença / Marcar como Ausente"
+            >
+              <i class="mdi mdi-close"></i>
+            </a>
 
             {% else %}
-              <a
-                href="{% url 'marcar_presenca' item.inscricao.id %}"
-                class="btn btn-outline-success btn-sm"
-                title="Confirmar Presença do Usuário"
-              >
-                <i class="mdi mdi-check"></i> Marcar Presença
-              </a>
+            <a
+              href="{% url 'marcar_presenca' item.inscricao.id %}"
+              class="btn btn-outline-success btn-sm"
+              title="Confirmar Presença do Usuário"
+            >
+              <i class="mdi mdi-check"></i> Marcar Presença
+            </a>
             {% endif %}
 
             <div class="d-inline-block ms-3 border-start ps-3">
@@ -88,6 +89,13 @@
                 <i class="mdi mdi-pencil"></i>
               </a>
               <a
+                href="{% url 'detalhes_inscricao' item.inscricao.id %}"
+                class="btn btn-sm btn-info"
+                title="Ver Detalhes Inscrição"
+              >
+                <i class="mdi mdi-eye"></i>
+              </a>
+              <a
                 href="{% url 'deletar_inscricao' item.inscricao.id %}"
                 class="btn btn-sm btn-danger"
                 title="Cancelar Inscrição Definitivamente"
@@ -96,11 +104,10 @@
                 <i class="mdi mdi-delete"></i>
               </a>
             </div>
-
           </div>
         </div>
       </li>
-      
+
       {% empty %}
       <li class="list-group-item text-center py-5">
         <h4 class="text-muted">Nenhum inscrito neste evento ainda.</h4>

@@ -46,6 +46,13 @@
                   >
                     <i class="mdi mdi-pencil"></i>
                   </a>
+                  <a
+                    href="{% url 'detalhes_usuario' usuario.pk %}"
+                    class="btn btn-inverse-info btn-icon mr-2 d-inline-flex align-items-center justify-content-center"
+                    title="Ver Detalhes"
+                  >
+                    <i class="mdi mdi-eye"></i>
+                  </a>
                   {% if usuario.user != request.user %}
                   <a
                     href="{% url 'deletar_usuario' usuario.pk %}"
