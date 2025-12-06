@@ -1,14 +1,10 @@
-
-
 # MeetFlow - Sistema de Gestão de Eventos
 
 Este projeto é o Trabalho Final da disciplina de **Programação para Web I** do curso de Análise e Desenvolvimento de Sistemas (4º Período), ministrada pelo Professor Carlos Anderson.
 
 O sistema foi desenvolvido utilizando **Django** e **Bootstrap**, focando na implementação de autenticação, permissões e operações CRUD completas utilizando exclusivamente **Function-Based Views (FBV)**.
 
-
 <img src="static/src/assets/images/meetflow.png" alt="MeetFlow Logo">
-
 
 ## 🎯 Objetivo
 
@@ -134,7 +130,7 @@ Caso prefira rodar sem Docker, você precisará de uma instância **MySQL** roda
 
 Confira a demonstração do funcionamento do sistema no link abaixo:
 
-**[INSIRA AQUI O LINK DO VÍDEO NO YOUTUBE]**
+[Assista ao Vídeo de Apresentação](https://www.youtube.com/watch?v=7S-sA_IdfNk)
 
 ---
 
